@@ -1,0 +1,40 @@
+# Python standard
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.arrow
+.Python
+env/
+venv/
+.env
+
+# User specified to ignore (Benchmark)
+CL_Benchmark/
+
+# Large model files (Likely not to be tracked)
+initial_model/
+
+# Environment and System
+miniforge3/
+snap/
+Miniforge3-Linux-x86_64.sh
+.DS_Store
+
+# IDE settings
+.vscode/
+.idea/
+
+# Data folder - Ignore data but keep scripts and tokenizer configs
+data/*
+!data/*.py
+!data/gpt2tokenizer/
+
+# Note: The following are intentionally NOT ignored based on requirements:
+# - configs/
+# - logs/
+# - logs_and_outputs*/
+# - wandb/
+# - scripts/
+# - src/
+# - requirements.txt

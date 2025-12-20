@@ -2,17 +2,21 @@
 set -x
 
 export CUDA_DEVICE_ORDER="PCI_BUS_ID"
-export TRANSFORMERS_CACHE=/root/.cache/huggingface
+export TRANSFORMERS_CACHE=/home/dengkn/.cache/huggingface
+
+
+export NCCL_P2P_DISABLE=1
+export NCCL_IB_DISABLE=1
+# export NCCL_DEBUG=INFO
 
 port=$(shuf -i25000-30000 -n1)
  
-# bash scripts_llama/order_1.sh> logs_and_outputs_llama/order_1/logs/train_and_infer.log 2>&1 &
+# bash scripts_llama/order_1.sh> logs_and_outputs_llama/order_1/logs/train_and_infer.log 2>&1   后面再加一个&表示进程在后台运行
 
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie_lora.py \
-   --do_train \
+CUDA_VISIBLE_DEVICES=0,1 deepspeed --master_port $port src/run_uie_lora.py \
    --do_predict \
    --predict_with_generate \
-   --model_name_or_path initial_model/llama \
+   --model_name_or_path logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter \
    --data_dir CL_Benchmark \
    --task_config_dir configs/order1_configs/dbpedia \
    --instruction_file configs/instruction_config.json \
@@ -44,11 +48,10 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie_l
 
 sleep 5
 
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie_lora.py \
-   --do_train \
+CUDA_VISIBLE_DEVICES=0,1 deepspeed --master_port $port src/run_uie_lora.py \
    --do_predict \
    --predict_with_generate \
-   --model_name_or_path logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter \
+   --model_name_or_path logs_and_outputs_llama/order_1/outputs/2-amazon/adapter \
    --data_dir CL_Benchmark \
    --task_config_dir configs/order1_configs/amazon \
    --instruction_file configs/instruction_config.json \
@@ -80,7 +83,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie_l
 
 sleep 5
 
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie_lora.py \
+CUDA_VISIBLE_DEVICES=0,1 deepspeed --master_port $port src/run_uie_lora.py \
    --do_train \
    --do_predict \
    --predict_with_generate \
@@ -116,7 +119,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie_l
 
 sleep 5
 
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie_lora.py \
+CUDA_VISIBLE_DEVICES=0,1 deepspeed --master_port $port src/run_uie_lora.py \
    --do_train \
    --do_predict \
    --predict_with_generate \

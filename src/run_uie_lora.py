@@ -23,6 +23,7 @@ import os
 import sys
 import json
 import time
+import torch
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -254,6 +255,9 @@ def main():
     else:
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
+    if training_args.local_rank != -1:
+        torch.cuda.set_device(training_args.local_rank)
+
     # Setup logging
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
@@ -294,6 +298,7 @@ def main():
     data_cache_dir = gen_cache_path(training_args.output_dir, data_args)
 
     # Get the UIE dataset
+
     raw_datasets = load_dataset(
         os.path.join(CURRENT_DIR, "uie_dataset_lora.py"),
         data_dir=data_args.data_dir,
@@ -305,7 +310,9 @@ def main():
         max_num_instances_per_eval_task=data_args.max_num_instances_per_eval_task,
         num_examples=data_args.num_examples
     )
-    raw_datasets.cleanup_cache_files()
+        
+    # if training_args.local_rank <= 0:
+    #      raw_datasets.cleanup_cache_files()
 
     # Load pretrained model and tokenizer
     #
@@ -365,9 +372,11 @@ def main():
     else: 
         model_class = AutoModelForSeq2SeqLM
 
+    #  情况 A：加载已有的 Adapter
     if 'adapter' in model_args.model_name_or_path: # add lora-adapter to the original model
         model = model_class.from_pretrained(config.base_model_name_or_path)
         model = PeftModel.from_pretrained(model, model_args.model_name_or_path)
+    # 情况 B：加载基础模型（无 Adapter）如果路径中不包含 "adapter"（例如指向原始的 Llama 模型路径），代码会加载基础模型，并初始化一个新的、未经训练的 LoRA 配置。
     elif 'llama' in model_args.model_name_or_path.lower():
         model = model_class.from_pretrained(
             model_args.model_name_or_path,
@@ -380,6 +389,7 @@ def main():
         peft_config = LoraConfig(
             task_type=TaskType.CAUSAL_LM, inference_mode=False, r=model_args.lora_dim, lora_alpha=32, lora_dropout=0.1
         )
+        # target_modules  If this is not specified, modules will be chosen according to the model architecture.
         model = get_peft_model(model, peft_config)
     else:
         model = model_class.from_pretrained(
@@ -395,6 +405,8 @@ def main():
         )
         model = get_peft_model(model, peft_config)
 
+    model.print_trainable_parameters()
+    print("=======================================")
     model.resize_token_embeddings(len(tokenizer))
 
     if 'llama' in model_args.model_name_or_path.lower():
@@ -414,6 +426,8 @@ def main():
         # this module should always be frozen because we change the vocabulary
         elif name.find("shared") != -1:
             param.requires_grad = False
+            
+    model.print_trainable_parameters()
 
     if (
             hasattr(model.config, "max_position_embeddings")
@@ -524,6 +538,7 @@ def main():
             checkpoint = training_args.resume_from_checkpoint
         elif last_checkpoint is not None:
             checkpoint = last_checkpoint
+        print("***** Running training *****")
         train_result = trainer.train(resume_from_checkpoint=checkpoint)
 
         peft_model_id = training_args.output_dir + "/adapter"

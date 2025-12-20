@@ -3,6 +3,7 @@ from transformers import GenerationConfig
 from transformers.trainer_seq2seq import Seq2SeqTrainer
 from transformers.trainer import *
 from transformers.trainer_callback import TrainerCallback
+from transformers.integrations import is_deepspeed_zero3_enabled
 
 from uie_collator import SUPPORTED_DECODER_MODELS, check_model
 from uie_dataset_lora import ANSWER_PREFIX
@@ -141,16 +142,33 @@ class UIETrainer(Seq2SeqTrainer):
         prediction_loss_only = prediction_loss_only if prediction_loss_only is not None else args.prediction_loss_only
 
         # if eval is called w/o train init deepspeed here
-        if args.deepspeed and not self.deepspeed:
+        # if args.deepspeed and not self.deepspeed:  因为你使用的是 ZeRO Stage 2 且处于 纯推理模式（Inference），这段手动初始化的代码其实是多余且有害的。
+        #     # XXX: eval doesn't have `resume_from_checkpoint` arg but we should be able to do eval
+        #     # from the checkpoint eventually
+        #     deepspeed_engine, *_ = deepspeed_init(
+        #         self, num_training_steps=0, #resume_from_checkpoint=None, # inference=True
+        #     )
+        #     self.model = deepspeed_engine.module
+        #     self.model_wrapped = deepspeed_engine
+        #     self.deepspeed = deepspeed_engine
 
-            # XXX: eval doesn't have `resume_from_checkpoint` arg but we should be able to do eval
-            # from the checkpoint eventually
-            deepspeed_engine, _, _ = deepspeed_init(
-                self, num_training_steps=0, resume_from_checkpoint=None, # inference=True
+
+        if args.deepspeed and not self.deepspeed:
+            ds_results = deepspeed_init(
+                self, num_training_steps=0, #resume_from_checkpoint=None, # inference=True
             )
-            self.model = deepspeed_engine.module
-            self.model_wrapped = deepspeed_engine
-            self.deepspeed = deepspeed_engine
+            first_item = ds_results[0]
+
+            if hasattr(first_item, "module"):
+                # ZeRO Stage 3 逻辑：使用 DS Engine
+                self.model = first_item.module
+                self.model_wrapped = first_item
+                self.deepspeed = first_item
+            else:
+                # ZeRO Stage 2 推理逻辑：
+                # DeepSpeed 返回了 DummyOptim，没有接管模型。
+                # 此时模型还在 CPU 上，我们需要手动将其移动到当前进程对应的 GPU 设备上。
+                self.model = self.model.to(self.args.device)  # <--- 新增这一行！
 
         model = self._wrap_model(self.model, training=False)
 
@@ -193,6 +211,7 @@ class UIETrainer(Seq2SeqTrainer):
 
         observed_num_examples = 0
         # Main evaluation loop
+        print("Starting evaluation loop...") # Debug print
         for step, inputs in enumerate(dataloader):
             # Update the observed num examples
             observed_batch_size = find_batch_size(inputs)
@@ -210,11 +229,13 @@ class UIETrainer(Seq2SeqTrainer):
                 losses = self._nested_gather(loss.repeat(batch_size))
                 losses_host = losses if losses_host is None else torch.cat((losses_host, losses), dim=0)
             if labels is not None:
-                labels = self._pad_across_processes(labels)
+                # labels = self._pad_across_processes(labels)  # version update, changed
+                labels = self.accelerator.pad_across_processes(labels, dim=1, pad_index=-100)
                 labels = self._nested_gather(labels)
                 labels_host = labels if labels_host is None else nested_concat(labels_host, labels, padding_index=-100)
             if logits is not None:
-                logits = self._pad_across_processes(logits)
+                # logits = self._pad_across_processes(logits)  # version update, changed
+                logits = self.accelerator.pad_across_processes(logits,dim=1, pad_index=0)
                 logits = self._nested_gather(logits)
                 if self.preprocess_logits_for_metrics is not None:
                     logits = self.preprocess_logits_for_metrics(logits, labels)
@@ -265,6 +286,7 @@ class UIETrainer(Seq2SeqTrainer):
 
         # Number of losses has been rounded to a multiple of batch_size and in a distributed training, the number of
         # samplers has been rounded to a multiple of batch_size, so we truncate.
+        from transformers.trainer_pt_utils import nested_truncate
         if all_losses is not None:
             all_losses = all_losses[:num_samples]
         if all_preds is not None:
