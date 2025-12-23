@@ -32,7 +32,7 @@ def get_peft_model_state_dict(model, state_dict=None, adapter_name="default"):
     if state_dict is None:
         state_dict = model.state_dict()
         
-        # modified
+        # modified：如果不保存loranew（默认为false），则将loranew的参数合并到lora中
         if config.save_loranew == False:
             flag = 1 # this is a switch represents whether 'r_sum' is written to the config file
             for k in state_dict:

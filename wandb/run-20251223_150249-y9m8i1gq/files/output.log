@@ -1,0 +1,52 @@
+  0%|                                                                                                                                                                                             | 0/156 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+    main()
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 545, in main
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+    return inner_training_loop(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 120, in training_step
+    loss = self.deepspeed.backward(loss)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/engine.py", line 2020, in backward
+    self.optimizer.backward(loss, retain_graph=retain_graph)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 2058, in backward
+    self.loss_scaler.backward(loss.float(), retain_graph=retain_graph)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/fp16/loss_scaler.py", line 63, in backward
+    scaled_loss.backward(retain_graph=retain_graph)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/_tensor.py", line 626, in backward
+    torch.autograd.backward(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/autograd/__init__.py", line 347, in backward
+    _engine_run_backward(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 10.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1678919 has 4.72 GiB memory in use. Process 1679789 has 4.72 GiB memory in use. Including non-PyTorch memory, this process has 15.02 GiB memory in use. Of the allocated memory 14.31 GiB is allocated by PyTorch, and 19.64 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 545, in main
+[rank0]:     train_result = trainer.train(resume_from_checkpoint=checkpoint)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+[rank0]:     return inner_training_loop(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+[rank0]:     tr_loss_step = self.training_step(model, inputs)
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 120, in training_step
+[rank0]:     loss = self.deepspeed.backward(loss)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/engine.py", line 2020, in backward
+[rank0]:     self.optimizer.backward(loss, retain_graph=retain_graph)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 2058, in backward
+[rank0]:     self.loss_scaler.backward(loss.float(), retain_graph=retain_graph)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/fp16/loss_scaler.py", line 63, in backward
+[rank0]:     scaled_loss.backward(retain_graph=retain_graph)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/_tensor.py", line 626, in backward
+[rank0]:     torch.autograd.backward(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/autograd/__init__.py", line 347, in backward
+[rank0]:     _engine_run_backward(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
+[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 10.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1678919 has 4.72 GiB memory in use. Process 1679789 has 4.72 GiB memory in use. Including non-PyTorch memory, this process has 15.02 GiB memory in use. Of the allocated memory 14.31 GiB is allocated by PyTorch, and 19.64 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

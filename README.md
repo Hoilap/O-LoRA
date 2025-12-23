@@ -69,47 +69,18 @@ order3:
 bash scripts_llama/order_3.sh> logs_and_outputs_llama/order_3/logs/train_and_infer.log 2>&1 &
 ```
 ## Timestamp
-O-lora复现成功，单卡，
+O-lora复现成功，单卡
 
+---
 
-这个警告 ProcessGroupNCCL.cpp:4561 ... using GPU 0 to perform barrier as devices used by this process are currently unknown 通常出现在 PyTorch 分布式初始化（DDP）早期，当进程组尚未完全建立或设备映射尚未明确时调用了 barrier()。
-
-在您的代码中，这很可能是因为我在上一步添加的 training_args.main_process_first 上下文管理器内部调用了 barrier()，而此时 DeepSpeed 或 PyTorch 的分布式环境可能还没有完全初始化好设备绑定。
-
-问题分析：
-training_args.main_process_first 依赖于 torch.distributed。如果它在 deepspeed 初始化之前被调用，或者在设备（cuda:0, cuda:1）被显式设置之前被调用，就可能触发这个警告，甚至导致死锁（Hang）。
-
-解决方案：
-我们需要确保在调用 main_process_first 之前，分布式环境已经正确初始化，并且当前进程已经绑定到了正确的 GPU 设备上。
-
-在 run_uie_lora.py 中，UIETrainingArguments 继承自 Seq2SeqTrainingArguments，而 Seq2SeqTrainingArguments 继承自 TrainingArguments。TrainingArguments 的初始化通常会处理分布式设置。
-
-但是，为了稳妥起见，我们可以显式地设置当前设备的 ID。
-
-让我们检查一下 run_uie_lora.py 的开头部分。
-
-training_args.device 的访问应该会触发设备初始化。
-
-然而，警告信息提示 devices used by this process are currently unknown。这表明 torch.cuda.set_device(local_rank) 可能还没有被调用。
-
-我建议在 main 函数的早期，在解析完参数后，显式调用 torch.cuda.set_device。
-
-此外，为了避免 main_process_first 带来的潜在死锁（如果它内部的 barrier 实现有问题），我们可以用一种更显式、更安全的方式来替代它：
-
-但是 load_dataset 内部有文件锁机制，理论上是安全的。问题在于我们之前加的 main_process_first 可能引入了额外的 barrier。
-
-让我们先尝试显式设置设备，这通常能解决 ProcessGroupNCCL 的那个警告。
-
-同时，我会检查 main_process_first 的位置。
-
-如果 training_args.device 已经被访问过（在 logger.warning 中），那么 training_args 内部应该已经初始化了分布式环境。
-
-让我们尝试在 run_uie_lora.py 中添加 torch.cuda.set_device。
-
-另外，还有一个可能性：deepspeed 启动器会自动设置 LOCAL_RANK 环境变量，但 transformers 的 TrainingArguments 可能需要显式传入 local_rank 参数（虽然通常它能自动检测）。
-
-
-
+`ProcessGroupNCCL.cpp:4561 ... using GPU 0 to perform barrier as devices used by this process are currently unknown`。
+*   **现象**：程序弹出警告，甚至可能导致**进程卡死（Hang/死锁）**。
+*   **出现时机**：通常发生在分布式训练（DDP 或 DeepSpeed）的早期阶段，具体是在调用 `training_args.main_process_first` 上下文管理器时。
+*   **根本原因**：在分布式环境（NCCL 进程组）尚未完全建立、或者当前进程尚未明确绑定到具体 GPU 设备时，程序就调用了同步操作（`barrier()`）。系统因为不知道当前进程该用哪个 GPU，所以默认尝试用 GPU 0，导致冲突或混乱。
+* **解决方案** 
+  *   **环境变量**：确认 DeepSpeed 或 torchrun 是否正确传递了 `LOCAL_RANK` 环境变量。
+  *   **参数传递**：如果自动检测失效，需要在初始化 `TrainingArguments` 时显式传入 `local_rank` 参数。
+---
 ```
 [rank0]: AssertionError: no_sync context manager is incompatible with gradient partitioning logic of ZeRO stage 2
 [rank1]: Traceback (most recent call last):
@@ -148,89 +119,14 @@ accelerate               0.30.0
 deepspeed                0.18.3
 transformers             4.34.0
 
-
 下载了指定deepspeed后解决
 
+---
+
 ```
-+ export CUDA_DEVICE_ORDER=PCI_BUS_ID
-+ CUDA_DEVICE_ORDER=PCI_BUS_ID
-+ export TRANSFORMERS_CACHE=/home/dengkn/.cache/huggingface
-+ TRANSFORMERS_CACHE=/home/dengkn/.cache/huggingface
-++ shuf -i25000-30000 -n1
-+ port=27244
-+ CUDA_VISIBLE_DEVICES=0,1
 + deepspeed --master_port 27244 src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path /home/dengkn/N-LoRA/initial_model/llama --data_dir CL_Benchmark --task_config_dir configs/order1_configs/dbpedia --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/1-dbpedia --per_device_train_batch_size 1 --per_device_eval_batch_size 4 --gradient_accumulation_steps 8 --learning_rate 1e-03 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round1 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0
-[2025-12-18 20:16:22,490] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-[2025-12-18 20:16:24,212] [WARNING] [runner.py:215:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
-Detected VISIBLE_DEVICES=0,1: setting --include=localhost:0,1
-[2025-12-18 20:16:24,213] [INFO] [runner.py:607:main] cmd = /home/dengkn/miniforge3/envs/aslora/bin/python3.9 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMV19 --master_addr=127.0.0.1 --master_port=27244 --enable_each_rank_log=None src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path /home/dengkn/N-LoRA/initial_model/llama --data_dir CL_Benchmark --task_config_dir configs/order1_configs/dbpedia --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/1-dbpedia --per_device_train_batch_size 1 --per_device_eval_batch_size 4 --gradient_accumulation_steps 8 --learning_rate 1e-03 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round1 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0
-[2025-12-18 20:16:25,391] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-[2025-12-18 20:16:27,068] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1]}
-[2025-12-18 20:16:27,068] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=2, node_rank=0
-[2025-12-18 20:16:27,068] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1]})
-[2025-12-18 20:16:27,068] [INFO] [launch.py:164:main] dist_world_size=2
-[2025-12-18 20:16:27,068] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1
-[2025-12-18 20:16:27,089] [INFO] [launch.py:256:main] process 748089 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=0', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', '/home/dengkn/N-LoRA/initial_model/llama', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/dbpedia', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '8', '--learning_rate', '1e-03', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round1', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0']
-[2025-12-18 20:16:27,104] [INFO] [launch.py:256:main] process 748090 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', '/home/dengkn/N-LoRA/initial_model/llama', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/dbpedia', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '8', '--learning_rate', '1e-03', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round1', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0']
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
-  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
-  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
-  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
-  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
-[2025-12-18 20:16:29,874] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-12-18 20:16:29,904] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-12-18 20:16:31,005] [INFO] [comm.py:652:init_distributed] cdb=None
-[2025-12-18 20:16:31,005] [INFO] [comm.py:652:init_distributed] cdb=None
-[2025-12-18 20:16:31,005] [INFO] [comm.py:683:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
-Using the `WANDB_DISABLED` environment variable is deprecated and will be removed in v5. Use the --report_to flag to control the integrations used for logging result (for instance --report_to none).
-12/18/2025 20:16:31 - WARNING - __main__ - Process rank: 0, device: cuda:0, n_gpu: 1distributed training: True, 16-bits training: False
-normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
-[WARNING|logging.py:290] 2025-12-18 20:16:31,452 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
-Using the `WANDB_DISABLED` environment variable is deprecated and will be removed in v5. Use the --report_to flag to control the integrations used for logging result (for instance --report_to none).
-12/18/2025 20:16:31 - WARNING - __main__ - Process rank: 1, device: cuda:1, n_gpu: 1distributed training: True, 16-bits training: False
-normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
-[WARNING|logging.py:290] 2025-12-18 20:16:31,578 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
 
-Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]
-Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]
-Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.23it/s]
-Loading checkpoint shards:  33%|███▎      | 1/3 [00:01<00:02,  1.03s/it]
-Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.43it/s]
-Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.29it/s]
-Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.63it/s]
-Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.54it/s]
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/init.py:511: UserWarning: Initializing zero-element tensors is a no-op
-  warnings.warn("Initializing zero-element tensors is a no-op")
 
-Loading checkpoint shards: 100%|██████████| 3/3 [00:02<00:00,  1.65it/s]
-Loading checkpoint shards: 100%|██████████| 3/3 [00:02<00:00,  1.48it/s]
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/init.py:511: UserWarning: Initializing zero-element tensors is a no-op
-  warnings.warn("Initializing zero-element tensors is a no-op")
-trainable params: 0 || all params: 6742609920 || trainable%: 0.0
-=======================================
-trainable params: 4194304 || all params: 6742609920 || trainable%: 0.06220594176090199
------Gradient checkpointing: False -----
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
-dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
-  warnings.warn(
-trainable params: 0 || all params: 6742609920 || trainable%: 0.0
-=======================================
-trainable params: 4194304 || all params: 6742609920 || trainable%: 0.06220594176090199
 -----Gradient checkpointing: False -----
 /home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
 dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
@@ -269,16 +165,6 @@ frame #4: <unknown function> + 0x145c0 (0x7b9959b425c0 in /home/dengkn/miniforge
 frame #5: <unknown function> + 0x9caa4 (0x7b995a69caa4 in /lib/x86_64-linux-gnu/libc.so.6)
 frame #6: <unknown function> + 0x129c6c (0x7b995a729c6c in /lib/x86_64-linux-gnu/libc.so.6)
 
-[rank1]:[E1218 20:27:21.486311443 ProcessGroupNCCL.cpp:1895] [PG ID 1 PG GUID 1 Rank 1] Process group watchdog thread terminated with exception: [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1, OpType=BROADCAST, NumelIn=131072000, NumelOut=131072000, Timeout(ms)=600000) ran for 600088 milliseconds before timing out.
-Exception raised from checkTimeout at /pytorch/torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:632 (most recent call first):
-frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7ca805fe31b6 in /home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/lib/libc10.so)
-frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x2b4 (0x7ca7b35fec74 in /home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/lib/libtorch_cuda.so)
-frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x890 (0x7ca7b36007d0 in /home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/lib/libtorch_cuda.so)
-frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7ca7b36016ed in /home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/lib/libtorch_cuda.so)
-frame #4: <unknown function> + 0x145c0 (0x7ca8061425c0 in /home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/lib/libtorch.so)
-frame #5: <unknown function> + 0x9caa4 (0x7ca806c9caa4 in /lib/x86_64-linux-gnu/libc.so.6)
-frame #6: <unknown function> + 0x129c6c (0x7ca806d29c6c in /lib/x86_64-linux-gnu/libc.so.6)
-
 terminate called after throwing an instance of 'c10::DistBackendError'
 terminate called after throwing an instance of 'c10::DistBackendError'
   what():  [PG ID 1 PG GUID 1 Rank 0] Process group watchdog thread terminated with exception: [Rank 0] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1, OpType=BROADCAST, NumelIn=131072000, NumelOut=131072000, Timeout(ms)=600000) ran for 600081 milliseconds before timing out.
@@ -315,61 +201,9 @@ frame #2: <unknown function> + 0x145c0 (0x7ca8061425c0 in /home/dengkn/miniforge
 frame #3: <unknown function> + 0x9caa4 (0x7ca806c9caa4 in /lib/x86_64-linux-gnu/libc.so.6)
 frame #4: <unknown function> + 0x129c6c (0x7ca806d29c6c in /lib/x86_64-linux-gnu/libc.so.6)
 
-[2025-12-18 20:27:22,783] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 748089
-[2025-12-18 20:27:22,783] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 748090
-[2025-12-18 20:27:23,533] [ERROR] [launch.py:325:sigkill_handler] ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', '/home/dengkn/N-LoRA/initial_model/llama', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/dbpedia', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '8', '--learning_rate', '1e-03', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round1', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0'] exits with return code = -6
-+ --disable_tqdm True
-scripts_llama/order_1.sh: line 45: --disable_tqdm: command not found
-+ sleep 5
-+ CUDA_VISIBLE_DEVICES=0,1
-+ deepspeed --master_port 27244 src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter --data_dir CL_Benchmark --task_config_dir configs/order1_configs/amazon --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/2-amazon --per_device_train_batch_size 1 --per_device_eval_batch_size 4 --gradient_accumulation_steps 8 --learning_rate 1e-04 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round2 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --disable_tqdm True
-[2025-12-18 20:27:30,944] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-[2025-12-18 20:27:32,639] [WARNING] [runner.py:215:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
-Detected VISIBLE_DEVICES=0,1: setting --include=localhost:0,1
-[2025-12-18 20:27:32,639] [INFO] [runner.py:607:main] cmd = /home/dengkn/miniforge3/envs/aslora/bin/python3.9 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMV19 --master_addr=127.0.0.1 --master_port=27244 --enable_each_rank_log=None src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter --data_dir CL_Benchmark --task_config_dir configs/order1_configs/amazon --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/2-amazon --per_device_train_batch_size 1 --per_device_eval_batch_size 4 --gradient_accumulation_steps 8 --learning_rate 1e-04 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round2 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --disable_tqdm True
-[2025-12-18 20:27:33,718] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-[2025-12-18 20:27:35,366] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1]}
-[2025-12-18 20:27:35,366] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=2, node_rank=0
-[2025-12-18 20:27:35,366] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1]})
-[2025-12-18 20:27:35,366] [INFO] [launch.py:164:main] dist_world_size=2
-[2025-12-18 20:27:35,366] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1
-[2025-12-18 20:27:35,388] [INFO] [launch.py:256:main] process 749021 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=0', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/amazon', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/2-amazon', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '8', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round2', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--disable_tqdm', 'True']
-[2025-12-18 20:27:35,402] [INFO] [launch.py:256:main] process 749022 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/amazon', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/2-amazon', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '8', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round2', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--disable_tqdm', 'True']
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
-  torch.utils._pytree._register_pytree_node(
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
-  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
-  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
-  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
-/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
-  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
-[2025-12-18 20:27:38,112] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-12-18 20:27:38,216] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-12-18 20:27:39,316] [INFO] [comm.py:652:init_distributed] cdb=None
-[2025-12-18 20:27:39,316] [INFO] [comm.py:683:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
-[2025-12-18 20:27:39,346] [INFO] [comm.py:652:init_distributed] cdb=None
-Using the `WANDB_DISABLED` environment variable is deprecated and will be removed in v5. Use the --report_to flag to control the integrations used for logging result (for instance --report_to none).
-12/18/2025 20:27:39 - WARNING - __main__ - Process rank: 0, device: cuda:0, n_gpu: 1distributed training: True, 16-bits training: False
-[rank0]:[W1218 20:27:39.903177285 ProcessGroupNCCL.cpp:4561] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
-Using the `WANDB_DISABLED` environment variable is deprecated and will be removed in v5. Use the --report_to flag to control the integrations used for logging result (for instance --report_to none).
-12/18/2025 20:27:39 - WARNING - __main__ - Process rank: 1, device: cuda:1, n_gpu: 1distributed training: True, 16-bits training: False
-[rank1]:[W1218 20:27:39.932905430 ProcessGroupNCCL.cpp:4561] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
-
 ```
+`ProcessGroupNCCL.cpp:629 [Rank 0] Watchdog caught collective operation timeout` NCCL 分布式同步超时 (Watchdog Timeout)
 关闭offload
-
 ```
 [rank0]:[E1218 20:43:21.166114205 ProcessGroupNCCL.cpp:629] [Rank 0] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=1, OpType=BROADCAST, NumelIn=131072000, NumelOut=131072000, Timeout(ms)=600000) ran for 600036 milliseconds before timing out.
 [rank0]:[E1218 20:43:21.166281407 ProcessGroupNCCL.cpp:2168] [PG ID 1 PG GUID 1 Rank 0]  failure detected by watchdog at work sequence id: 1 PG status: last enqueued work: 547, last completed work: -1
@@ -407,10 +241,41 @@ frame #4: <unknown function> + 0x129c6c (0x7564c4529c6c in /lib/x86_64-linux-gnu
 ```
 export NCCL_P2P_DISABLE=1
 export NCCL_IB_DISABLE=1
-双卡训练成功，但是推理出现问题
+双卡训练成功
 
+---
+推理出现问题。
+改了一些错误的地方，问题解决。
 
+---
 
+最后会进行统一的推理，其实完全可以前三步不进行predict
+
+--- 
+其实具体的库版本配置应该看：https://github.com/BeyonderXX/InstructUIE
+
+---
+根据你提供的日志，train/learning_rate 显示为 0。这意味着在整个训练过程中，学习率实际上一直是 0，模型参数根本没有更新。因此，无论你将初始学习率设置为 1e-03 还是 1e-04，由于实际生效的学习率都是 0，训练出来的模型（以及最终的 Loss 和 predict_exact_match）自然是完全一样的。
+造成这种情况的原因是 DeepSpeed 配置文件与训练参数冲突：
+你的 DeepSpeed 配置文件 stage2_llama.config 中包含了一个 scheduler 部分（配置为 WarmupLR）。
+当 DeepSpeed 配置文件中存在 scheduler 时，它会覆盖 HuggingFace Trainer 的调度器设置（即你脚本中的 --lr_scheduler_type constant 被忽略了）。
+由于脚本中设置了 --warmup_steps 0，DeepSpeed 的 WarmupLR 调度器可能因此将学习率默认为了 0（或者使用了默认的 warmup_min_lr，通常为 0）。
+
+有一丢丢提升
+
+Global Batch Size（单卡训练和 8 卡训练的梯度累积必须对齐）。
+### 知识：什么是梯度累计
+在深度学习训练中，Batch Size（批大小）对模型性能有很大影响：
+训练稳定性： Batch Size 越大，计算出的梯度越接近整个数据集的真实梯度方向，训练过程更平稳，不容易陷入局部抖动。
+收敛速度： 较大的 Batch Size 通常允许使用更大的学习率，从而加快模型的收敛速度。
+现在的模型（如 BERT, Llama, ViT 等）参数量巨大。当你尝试增大 Batch Size 时，GPU 显存会迅速耗尽（OOM - Out of Memory），因为显存不仅要存模型参数，还要存前向传播的中间激活值（Activations）。
+如果你只有一张 24G 显存的显卡，可能 Batch Size 设为 4 就满了，但实验发现 Batch Size 设为 64 效果才最好。这时候梯度累积就派上用场了。
+缺点/局限性：
+时间换空间： 梯度累积并不能加快训练速度。跑完一个“有效 Batch”的时间依然是 16 次小 Batch 计算的总和。
+Batch Normalization (BN) 的坑： 这是一个常见误区。梯度累积不能解决 BN 在小 Batch 上的不准确问题。因为 BN 是在每一层前向传播时根据当前 Batch 计算均值和方差的。如果你单次输入的 Batch 只有 2，BN 还是会基于 2 来计算，梯度累积救不了它。（解决方法通常是改用 Layer Norm 或 Group Norm）。
+
+### 思考1
+对aslora的的激活值进行层相似度计算，batchsize=1，怎么计算？好像也能计算，不过不同样本的稀疏度就不一样了。
 
 ## Citation
 ```latex

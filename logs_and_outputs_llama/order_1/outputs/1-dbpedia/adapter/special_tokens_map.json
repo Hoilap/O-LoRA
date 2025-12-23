@@ -1,9 +1,4 @@
 {
-  "additional_special_tokens": [
-    "<unk>",
-    "<s>",
-    "</s>"
-  ],
   "bos_token": "<s>",
   "eos_token": "</s>",
   "pad_token": "<s>",

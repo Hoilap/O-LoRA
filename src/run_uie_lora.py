@@ -54,8 +54,8 @@ from uie_trainer_lora import UIETrainer, DenserEvalCallback, skip_instructions
 from compute_metrics import compute_metrics, compute_grouped_metrics
 from model.llama import LlamaForCausalLM_with_lossmask
 
-# off wandb
-os.environ['WANDB_DISABLED'] = "True"
+# wandb
+os.environ['WANDB_DISABLED'] = "False"
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 logger = logging.getLogger(__name__)
 CURRENT_DIR = os.path.dirname(__file__)
@@ -274,7 +274,7 @@ def main():
     # Log on each process the small summary:
     logger.warning(
         f"Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}"
-        + f"distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16}"
+        + f"distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16 or training_args.bf16}"
     )
     logger.info(f"Training/evaluation parameters {training_args}")
 
@@ -374,10 +374,12 @@ def main():
 
     #  情况 A：加载已有的 Adapter
     if 'adapter' in model_args.model_name_or_path: # add lora-adapter to the original model
+        print("-----Using Pre-trained LoRA Adapter + base model -----")
         model = model_class.from_pretrained(config.base_model_name_or_path)
         model = PeftModel.from_pretrained(model, model_args.model_name_or_path)
     # 情况 B：加载基础模型（无 Adapter）如果路径中不包含 "adapter"（例如指向原始的 Llama 模型路径），代码会加载基础模型，并初始化一个新的、未经训练的 LoRA 配置。
     elif 'llama' in model_args.model_name_or_path.lower():
+        print("-----Using LLaMA -----")
         model = model_class.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
@@ -490,6 +492,7 @@ def main():
 
     # Metric
     def compute_rouge_metrics(dataset, preds, save_prefix=None):
+        # Llama 是 Decoder-only 模型，生成结果通常包含输入的 Prompt（问题描述）+ 生成的 Answer。需要去掉 instruction 部分
         decoded_preds = skip_instructions(model, preds, tokenizer)
         references = [e["Instance"]["label"] for e in dataset]
         result = compute_metrics(predictions=decoded_preds, references=references)

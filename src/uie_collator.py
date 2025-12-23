@@ -147,6 +147,7 @@ class DataCollatorForUIE:
 
             # add bos and eos
             task_input = self.tokenizer.bos_token + instruction
+            # print(task_input) 确认只有一个eos
             label = label + self.tokenizer.eos_token
 
             tokenized_input = self.tokenizer(task_input)["input_ids"]

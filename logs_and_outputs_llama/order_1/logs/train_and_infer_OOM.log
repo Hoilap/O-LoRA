@@ -1,0 +1,974 @@
++ export CUDA_DEVICE_ORDER=PCI_BUS_ID
++ CUDA_DEVICE_ORDER=PCI_BUS_ID
++ export TRANSFORMERS_CACHE=/home/dengkn/.cache/huggingface
++ TRANSFORMERS_CACHE=/home/dengkn/.cache/huggingface
++ export NCCL_P2P_DISABLE=1
++ NCCL_P2P_DISABLE=1
++ export NCCL_IB_DISABLE=1
++ NCCL_IB_DISABLE=1
+++ shuf -i25000-30000 -n1
++ port=29540
++ CUDA_VISIBLE_DEVICES=0,1
++ deepspeed --master_port 29540 src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path initial_model/llama --data_dir CL_Benchmark --task_config_dir configs/order1_configs/dbpedia --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/1-dbpedia --per_device_train_batch_size 1 --per_device_eval_batch_size 8 --gradient_accumulation_steps 32 --learning_rate 1e-03 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round1_bf16 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --bf16
+[2025-12-23 12:36:28,858] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+[2025-12-23 12:36:30,812] [WARNING] [runner.py:215:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+Detected VISIBLE_DEVICES=0,1: setting --include=localhost:0,1
+[2025-12-23 12:36:30,813] [INFO] [runner.py:607:main] cmd = /home/dengkn/miniforge3/envs/aslora/bin/python3.9 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMV19 --master_addr=127.0.0.1 --master_port=29540 --enable_each_rank_log=None src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path initial_model/llama --data_dir CL_Benchmark --task_config_dir configs/order1_configs/dbpedia --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/1-dbpedia --per_device_train_batch_size 1 --per_device_eval_batch_size 8 --gradient_accumulation_steps 32 --learning_rate 1e-03 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round1_bf16 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --bf16
+[2025-12-23 12:36:32,144] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+[2025-12-23 12:36:34,407] [INFO] [launch.py:139:main] 0 NCCL_P2P_DISABLE=1
+[2025-12-23 12:36:34,407] [INFO] [launch.py:139:main] 0 NCCL_IB_DISABLE=1
+[2025-12-23 12:36:34,407] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1]}
+[2025-12-23 12:36:34,407] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=2, node_rank=0
+[2025-12-23 12:36:34,407] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1]})
+[2025-12-23 12:36:34,407] [INFO] [launch.py:164:main] dist_world_size=2
+[2025-12-23 12:36:34,407] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1
+[2025-12-23 12:36:34,431] [INFO] [launch.py:256:main] process 1632263 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=0', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'initial_model/llama', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/dbpedia', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-03', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round1_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16']
+[2025-12-23 12:36:34,448] [INFO] [launch.py:256:main] process 1632264 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'initial_model/llama', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/dbpedia', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-03', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round1_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16']
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
+[2025-12-23 12:36:37,597] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-12-23 12:36:37,612] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-12-23 12:36:38,859] [INFO] [comm.py:652:init_distributed] cdb=None
+[2025-12-23 12:36:38,875] [INFO] [comm.py:652:init_distributed] cdb=None
+[2025-12-23 12:36:38,875] [INFO] [comm.py:683:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+12/23/2025 12:36:39 - WARNING - __main__ - Process rank: 0, device: cuda:0, n_gpu: 1distributed training: True, 16-bits training: True
+normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
+12/23/2025 12:36:39 - WARNING - __main__ - Process rank: 1, device: cuda:1, n_gpu: 1distributed training: True, 16-bits training: True
+normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
+-----Using LLaMA -----
+-----Using LLaMA -----
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.70s/it]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.06s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.58s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.75s/it]
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/init.py:511: UserWarning: Initializing zero-element tensors is a no-op
+  warnings.warn("Initializing zero-element tensors is a no-op")
+
+Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.67s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.88s/it]
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/init.py:511: UserWarning: Initializing zero-element tensors is a no-op
+  warnings.warn("Initializing zero-element tensors is a no-op")
+trainable params: 0 || all params: 6742609920 || trainable%: 0.0
+=======================================
+trainable params: 4194304 || all params: 6742609920 || trainable%: 0.06220594176090199
+-----Gradient checkpointing: False -----
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
+  warnings.warn(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+trainable params: 0 || all params: 6742609920 || trainable%: 0.0
+=======================================
+trainable params: 4194304 || all params: 6742609920 || trainable%: 0.06220594176090199
+-----Gradient checkpointing: False -----
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
+  warnings.warn(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+***** Running training *****
+***** Running training *****
+Using /home/dengkn/.cache/torch_extensions/py39_cu124 as PyTorch extensions root...
+Using /home/dengkn/.cache/torch_extensions/py39_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /home/dengkn/.cache/torch_extensions/py39_cu124/fused_adam/build.ninja...
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.17333126068115234 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.2015235424041748 seconds
+wandb: Currently logged in as: 20040817dkn-facebook (use `wandb login --relogin` to force relogin)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+wandb: wandb version 0.23.1 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.12.10
+wandb: Syncing run order1_round1_bf16
+wandb: ⭐️ View project at https://wandb.ai/20040817dkn-facebook/huggingface
+wandb: 🚀 View run at https://wandb.ai/20040817dkn-facebook/huggingface/runs/3f9dehbb
+wandb: Run data is saved locally in /home/dengkn/O-LoRA/wandb/run-20251223_123749-3f9dehbb
+wandb: Run `wandb offline` to turn off syncing.
+
+
+  0%|                                                                                                                           | 0/218 [00:00<?, ?it/s]
+  0%|▌                                                                                                                  | 1/218 [00:05<21:05,  5.83s/it]
+  1%|█                                                                                                                  | 2/218 [00:11<19:49,  5.51s/it]
+  1%|█▌                                                                                                                 | 3/218 [00:16<19:05,  5.33s/it]
+  2%|██                                                                                                                 | 4/218 [00:21<18:37,  5.22s/it]
+  2%|██▋                                                                                                                | 5/218 [00:26<18:56,  5.33s/it]
+  3%|███▏                                                                                                               | 6/218 [00:32<18:43,  5.30s/it]
+  3%|███▋                                                                                                               | 7/218 [00:37<18:28,  5.25s/it]
+  4%|████▏                                                                                                              | 8/218 [00:42<18:22,  5.25s/it]
+  4%|████▋                                                                                                              | 9/218 [00:47<18:07,  5.20s/it]
+  5%|█████▏                                                                                                            | 10/218 [00:52<18:07,  5.23s/it]
+                                                                                                                                                        
+
+  5%|█████▏                                                                                                            | 10/218 [00:52<18:07,  5.23s/it]{'loss': 1.7658, 'learning_rate': 0.001, 'epoch': 0.05}
+Traceback (most recent call last):
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+    main()
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 545, in main
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+    return inner_training_loop(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 82, in training_step
+    loss = self.compute_loss(model, inputs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 2801, in compute_loss
+    outputs = model(**inputs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/engine.py", line 1899, in forward
+    loss = self.module(*inputs, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/O-LoRA/src/peft/peft_model.py", line 678, in forward
+    return self.base_model(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/O-LoRA/src/model/llama.py", line 63, in forward
+    outputs = self.model(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 925, in forward
+    layer_outputs = decoder_layer(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 635, in forward
+    hidden_states, self_attn_weights, present_key_value = self.self_attn(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 373, in forward
+    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) / math.sqrt(self.head_dim)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 12.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 12.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1612264 has 4.72 GiB memory in use. Process 1612549 has 3.52 GiB memory in use. Including non-PyTorch memory, this process has 16.23 GiB memory in use. Of the allocated memory 15.45 GiB is allocated by PyTorch, and 80.48 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 545, in main
+[rank0]:     train_result = trainer.train(resume_from_checkpoint=checkpoint)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+[rank0]:     return inner_training_loop(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+[rank0]:     tr_loss_step = self.training_step(model, inputs)
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 82, in training_step
+[rank0]:     loss = self.compute_loss(model, inputs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 2801, in compute_loss
+[rank0]:     outputs = model(**inputs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/engine.py", line 1899, in forward
+[rank0]:     loss = self.module(*inputs, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/O-LoRA/src/peft/peft_model.py", line 678, in forward
+[rank0]:     return self.base_model(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/O-LoRA/src/model/llama.py", line 63, in forward
+[rank0]:     outputs = self.model(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 925, in forward
+[rank0]:     layer_outputs = decoder_layer(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 635, in forward
+[rank0]:     hidden_states, self_attn_weights, present_key_value = self.self_attn(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 373, in forward
+[rank0]:     attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) / math.sqrt(self.head_dim)
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 12.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 12.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1612264 has 4.72 GiB memory in use. Process 1612549 has 3.52 GiB memory in use. Including non-PyTorch memory, this process has 16.23 GiB memory in use. Of the allocated memory 15.45 GiB is allocated by PyTorch, and 80.48 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+wandb: Waiting for W&B process to finish, PID 1633080... (failed 1). Press ctrl-c to abort syncing.
+wandb: - 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: - 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: - 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: - 0.02MB of 0.03MB uploaded (0.00MB deduped)
+wandb: \ 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: | 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: / 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: - 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: \ 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: | 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: / 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb:                                                                                
+wandb: Run history:
+wandb:           train/epoch ▁
+wandb:     train/global_step ▁
+wandb:   train/learning_rate ▁
+wandb:            train/loss ▁
+wandb: 
+wandb: Run summary:
+wandb:           train/epoch 0.05
+wandb:     train/global_step 10
+wandb:   train/learning_rate 0.001
+wandb:            train/loss 1.7658
+wandb: 
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Synced order1_round1_bf16: https://wandb.ai/20040817dkn-facebook/huggingface/runs/3f9dehbb
+wandb: Find logs at: ./wandb/run-20251223_123749-3f9dehbb/logs/debug.log
+wandb: 
+[rank0]:[W1223 12:38:56.160507671 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[2025-12-23 12:38:58,629] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1632263
+[2025-12-23 12:38:58,629] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1632264
+[2025-12-23 12:38:58,947] [ERROR] [launch.py:325:sigkill_handler] ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'initial_model/llama', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/dbpedia', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-03', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round1_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16'] exits with return code = 1
++ sleep 5
++ CUDA_VISIBLE_DEVICES=0,1
++ deepspeed --master_port 29540 src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter --data_dir CL_Benchmark --task_config_dir configs/order1_configs/amazon --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/2-amazon --per_device_train_batch_size 1 --per_device_eval_batch_size 8 --gradient_accumulation_steps 32 --learning_rate 1e-04 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round2_bf16 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --bf16
+[2025-12-23 12:39:06,670] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+[2025-12-23 12:39:08,716] [WARNING] [runner.py:215:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+Detected VISIBLE_DEVICES=0,1: setting --include=localhost:0,1
+[2025-12-23 12:39:08,716] [INFO] [runner.py:607:main] cmd = /home/dengkn/miniforge3/envs/aslora/bin/python3.9 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMV19 --master_addr=127.0.0.1 --master_port=29540 --enable_each_rank_log=None src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter --data_dir CL_Benchmark --task_config_dir configs/order1_configs/amazon --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/2-amazon --per_device_train_batch_size 1 --per_device_eval_batch_size 8 --gradient_accumulation_steps 32 --learning_rate 1e-04 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round2_bf16 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --bf16
+[2025-12-23 12:39:10,037] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+[2025-12-23 12:39:11,987] [INFO] [launch.py:139:main] 0 NCCL_P2P_DISABLE=1
+[2025-12-23 12:39:11,987] [INFO] [launch.py:139:main] 0 NCCL_IB_DISABLE=1
+[2025-12-23 12:39:11,987] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1]}
+[2025-12-23 12:39:11,987] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=2, node_rank=0
+[2025-12-23 12:39:11,987] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1]})
+[2025-12-23 12:39:11,987] [INFO] [launch.py:164:main] dist_world_size=2
+[2025-12-23 12:39:11,987] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1
+[2025-12-23 12:39:12,010] [INFO] [launch.py:256:main] process 1633826 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=0', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/amazon', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/2-amazon', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round2_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16']
+[2025-12-23 12:39:12,031] [INFO] [launch.py:256:main] process 1633827 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/amazon', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/2-amazon', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round2_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16']
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
+[2025-12-23 12:39:15,274] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-12-23 12:39:15,275] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-12-23 12:39:16,534] [INFO] [comm.py:652:init_distributed] cdb=None
+[2025-12-23 12:39:16,550] [INFO] [comm.py:652:init_distributed] cdb=None
+[2025-12-23 12:39:16,550] [INFO] [comm.py:683:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+12/23/2025 12:39:16 - WARNING - __main__ - Process rank: 0, device: cuda:0, n_gpu: 1distributed training: True, 16-bits training: True
+normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
+12/23/2025 12:39:17 - WARNING - __main__ - Process rank: 1, device: cuda:1, n_gpu: 1distributed training: True, 16-bits training: True
+-----Using Pre-trained LoRA Adapter + base model -----
+normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
+-----Using Pre-trained LoRA Adapter + base model -----
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.22s/it]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.32s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  1.92s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.12s/it]
+
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  1.93s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.14s/it]
+trainable params: 0 || all params: 6746804224 || trainable%: 0.0
+=======================================
+trainable params: 0 || all params: 6746804224 || trainable%: 0.0
+=======================================
+trainable params: 4194304 || all params: 6746804224 || trainable%: 0.06216727002511582
+-----Gradient checkpointing: False -----
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
+  warnings.warn(
+trainable params: 4194304 || all params: 6746804224 || trainable%: 0.06216727002511582
+-----Gradient checkpointing: False -----
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
+  warnings.warn(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+***** Running training *****
+***** Running training *****
+Using /home/dengkn/.cache/torch_extensions/py39_cu124 as PyTorch extensions root...
+Using /home/dengkn/.cache/torch_extensions/py39_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /home/dengkn/.cache/torch_extensions/py39_cu124/fused_adam/build.ninja...
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.19042491912841797 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.2565288543701172 seconds
+wandb: Currently logged in as: 20040817dkn-facebook (use `wandb login --relogin` to force relogin)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+wandb: wandb version 0.23.1 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.12.10
+wandb: Syncing run order1_round2_bf16
+wandb: ⭐️ View project at https://wandb.ai/20040817dkn-facebook/huggingface
+wandb: 🚀 View run at https://wandb.ai/20040817dkn-facebook/huggingface/runs/vqcwwj6n
+wandb: Run data is saved locally in /home/dengkn/O-LoRA/wandb/run-20251223_124024-vqcwwj6n
+wandb: Run `wandb offline` to turn off syncing.
+
+
+  0%|                                                                                                                            | 0/78 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+    main()
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 545, in main
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+    return inner_training_loop(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 120, in training_step
+    loss = self.deepspeed.backward(loss)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/engine.py", line 2020, in backward
+    self.optimizer.backward(loss, retain_graph=retain_graph)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 2048, in backward
+    buf_1 = torch.empty(int(self.reduce_bucket_size),
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 382.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 254.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1612264 has 4.72 GiB memory in use. Process 1612549 has 3.52 GiB memory in use. Including non-PyTorch memory, this process has 15.99 GiB memory in use. Of the allocated memory 14.92 GiB is allocated by PyTorch, and 384.55 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 545, in main
+[rank0]:     train_result = trainer.train(resume_from_checkpoint=checkpoint)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+[rank0]:     return inner_training_loop(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+[rank0]:     tr_loss_step = self.training_step(model, inputs)
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 120, in training_step
+[rank0]:     loss = self.deepspeed.backward(loss)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/engine.py", line 2020, in backward
+[rank0]:     self.optimizer.backward(loss, retain_graph=retain_graph)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 2048, in backward
+[rank0]:     buf_1 = torch.empty(int(self.reduce_bucket_size),
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 382.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 254.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1612264 has 4.72 GiB memory in use. Process 1612549 has 3.52 GiB memory in use. Including non-PyTorch memory, this process has 15.99 GiB memory in use. Of the allocated memory 14.92 GiB is allocated by PyTorch, and 384.55 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+wandb: Waiting for W&B process to finish, PID 1634621... (failed 1). Press ctrl-c to abort syncing.
+wandb: - 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.01MB uploaded (0.00MB deduped)
+wandb: - 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: - 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: - 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: \ 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: | 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: / 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: - 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: \ 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: | 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb:                                                                                
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Synced order1_round2_bf16: https://wandb.ai/20040817dkn-facebook/huggingface/runs/vqcwwj6n
+wandb: Find logs at: ./wandb/run-20251223_124024-vqcwwj6n/logs/debug.log
+wandb: 
+[rank0]:[W1223 12:40:38.327202811 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[2025-12-23 12:40:40,158] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1633826
+[2025-12-23 12:40:40,158] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1633827
+[2025-12-23 12:40:40,476] [ERROR] [launch.py:325:sigkill_handler] ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/1-dbpedia/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/amazon', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/2-amazon', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round2_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16'] exits with return code = 1
++ sleep 5
++ CUDA_VISIBLE_DEVICES=0,1
++ deepspeed --master_port 29540 src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path logs_and_outputs_llama/order_1/outputs/2-amazon/adapter --data_dir CL_Benchmark --task_config_dir configs/order1_configs/yahoo --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/3-yahoo --per_device_train_batch_size 1 --per_device_eval_batch_size 8 --gradient_accumulation_steps 32 --learning_rate 1e-04 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round3_bf16 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --bf16
+[2025-12-23 12:40:48,177] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+[2025-12-23 12:40:50,177] [WARNING] [runner.py:215:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+Detected VISIBLE_DEVICES=0,1: setting --include=localhost:0,1
+[2025-12-23 12:40:50,177] [INFO] [runner.py:607:main] cmd = /home/dengkn/miniforge3/envs/aslora/bin/python3.9 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMV19 --master_addr=127.0.0.1 --master_port=29540 --enable_each_rank_log=None src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path logs_and_outputs_llama/order_1/outputs/2-amazon/adapter --data_dir CL_Benchmark --task_config_dir configs/order1_configs/yahoo --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/3-yahoo --per_device_train_batch_size 1 --per_device_eval_batch_size 8 --gradient_accumulation_steps 32 --learning_rate 1e-04 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round3_bf16 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --bf16
+[2025-12-23 12:40:51,510] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+[2025-12-23 12:40:53,475] [INFO] [launch.py:139:main] 0 NCCL_P2P_DISABLE=1
+[2025-12-23 12:40:53,475] [INFO] [launch.py:139:main] 0 NCCL_IB_DISABLE=1
+[2025-12-23 12:40:53,475] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1]}
+[2025-12-23 12:40:53,475] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=2, node_rank=0
+[2025-12-23 12:40:53,475] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1]})
+[2025-12-23 12:40:53,475] [INFO] [launch.py:164:main] dist_world_size=2
+[2025-12-23 12:40:53,475] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1
+[2025-12-23 12:40:53,503] [INFO] [launch.py:256:main] process 1635100 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=0', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/2-amazon/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/yahoo', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/3-yahoo', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round3_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16']
+[2025-12-23 12:40:53,527] [INFO] [launch.py:256:main] process 1635101 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/2-amazon/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/yahoo', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/3-yahoo', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round3_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16']
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
+[2025-12-23 12:40:56,776] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-12-23 12:40:56,790] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-12-23 12:40:58,089] [INFO] [comm.py:652:init_distributed] cdb=None
+[2025-12-23 12:40:58,089] [INFO] [comm.py:683:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[2025-12-23 12:40:58,101] [INFO] [comm.py:652:init_distributed] cdb=None
+12/23/2025 12:40:58 - WARNING - __main__ - Process rank: 0, device: cuda:0, n_gpu: 1distributed training: True, 16-bits training: True
+normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
+12/23/2025 12:40:58 - WARNING - __main__ - Process rank: 1, device: cuda:1, n_gpu: 1distributed training: True, 16-bits training: True
+-----Using Pre-trained LoRA Adapter + base model -----
+normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
+-----Using Pre-trained LoRA Adapter + base model -----
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.05s/it]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.15s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  1.82s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.00s/it]
+
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  1.87s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.06s/it]
+trainable params: 0 || all params: 6750998528 || trainable%: 0.0
+=======================================
+trainable params: 4194304 || all params: 6750998528 || trainable%: 0.06212864634178158
+-----Gradient checkpointing: False -----
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
+  warnings.warn(
+trainable params: 0 || all params: 6750998528 || trainable%: 0.0
+=======================================
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+trainable params: 4194304 || all params: 6750998528 || trainable%: 0.06212864634178158
+-----Gradient checkpointing: False -----
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
+  warnings.warn(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+***** Running training *****
+***** Running training *****
+Using /home/dengkn/.cache/torch_extensions/py39_cu124 as PyTorch extensions root...
+Using /home/dengkn/.cache/torch_extensions/py39_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /home/dengkn/.cache/torch_extensions/py39_cu124/fused_adam/build.ninja...
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.17439532279968262 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.20155620574951172 seconds
+wandb: Currently logged in as: 20040817dkn-facebook (use `wandb login --relogin` to force relogin)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+wandb: wandb version 0.23.1 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.12.10
+wandb: Syncing run order1_round3_bf16
+wandb: ⭐️ View project at https://wandb.ai/20040817dkn-facebook/huggingface
+wandb: 🚀 View run at https://wandb.ai/20040817dkn-facebook/huggingface/runs/vkzvsswk
+wandb: Run data is saved locally in /home/dengkn/O-LoRA/wandb/run-20251223_124208-vkzvsswk
+wandb: Run `wandb offline` to turn off syncing.
+
+
+  0%|                                                                                                                           | 0/156 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+    main()
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 545, in main
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+    return inner_training_loop(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 120, in training_step
+    loss = self.deepspeed.backward(loss)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/engine.py", line 2020, in backward
+    self.optimizer.backward(loss, retain_graph=retain_graph)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 2048, in backward
+    buf_1 = torch.empty(int(self.reduce_bucket_size),
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 382.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 104.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1612264 has 4.72 GiB memory in use. Process 1612549 has 3.52 GiB memory in use. Including non-PyTorch memory, this process has 16.14 GiB memory in use. Of the allocated memory 15.05 GiB is allocated by PyTorch, and 401.12 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 545, in main
+[rank0]:     train_result = trainer.train(resume_from_checkpoint=checkpoint)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+[rank0]:     return inner_training_loop(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+[rank0]:     tr_loss_step = self.training_step(model, inputs)
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 120, in training_step
+[rank0]:     loss = self.deepspeed.backward(loss)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/utils/nvtx.py", line 18, in wrapped_fn
+[rank0]:     ret_val = func(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/engine.py", line 2020, in backward
+[rank0]:     self.optimizer.backward(loss, retain_graph=retain_graph)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/deepspeed/runtime/zero/stage_1_and_2.py", line 2048, in backward
+[rank0]:     buf_1 = torch.empty(int(self.reduce_bucket_size),
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 382.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 104.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1612264 has 4.72 GiB memory in use. Process 1612549 has 3.52 GiB memory in use. Including non-PyTorch memory, this process has 16.14 GiB memory in use. Of the allocated memory 15.05 GiB is allocated by PyTorch, and 401.12 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+wandb: Waiting for W&B process to finish, PID 1635906... (failed 1). Press ctrl-c to abort syncing.
+wandb: - 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.01MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: - 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: - 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.02MB uploaded (0.00MB deduped)
+wandb: | 0.01MB of 0.02MB uploaded (0.00MB deduped)
+wandb: / 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: - 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: \ 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: | 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: / 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: - 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb: \ 0.02MB of 0.02MB uploaded (0.00MB deduped)
+wandb:                                                                                
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Synced order1_round3_bf16: https://wandb.ai/20040817dkn-facebook/huggingface/runs/vkzvsswk
+wandb: Find logs at: ./wandb/run-20251223_124208-vkzvsswk/logs/debug.log
+wandb: 
+[rank0]:[W1223 12:42:22.912195272 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[2025-12-23 12:42:24,662] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1635100
+[2025-12-23 12:42:24,662] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1635101
+[2025-12-23 12:42:24,978] [ERROR] [launch.py:325:sigkill_handler] ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/2-amazon/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/yahoo', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/3-yahoo', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round3_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16'] exits with return code = 1
++ sleep 5
++ CUDA_VISIBLE_DEVICES=0,1
++ deepspeed --master_port 29540 src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path logs_and_outputs_llama/order_1/outputs/3-yahoo/adapter --data_dir CL_Benchmark --task_config_dir configs/order1_configs/agnews --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/4-agnews --per_device_train_batch_size 1 --per_device_eval_batch_size 8 --gradient_accumulation_steps 32 --learning_rate 1e-04 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round4_bf16 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --bf16
+[2025-12-23 12:42:32,731] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+[2025-12-23 12:42:34,818] [WARNING] [runner.py:215:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+Detected VISIBLE_DEVICES=0,1: setting --include=localhost:0,1
+[2025-12-23 12:42:34,819] [INFO] [runner.py:607:main] cmd = /home/dengkn/miniforge3/envs/aslora/bin/python3.9 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMV19 --master_addr=127.0.0.1 --master_port=29540 --enable_each_rank_log=None src/run_uie_lora.py --do_train --do_predict --predict_with_generate --model_name_or_path logs_and_outputs_llama/order_1/outputs/3-yahoo/adapter --data_dir CL_Benchmark --task_config_dir configs/order1_configs/agnews --instruction_file configs/instruction_config.json --instruction_strategy single --output_dir logs_and_outputs_llama/order_1/outputs/4-agnews --per_device_train_batch_size 1 --per_device_eval_batch_size 8 --gradient_accumulation_steps 32 --learning_rate 1e-04 --num_train_epochs 1 --deepspeed configs/ds_configs/stage2_llama.config --run_name order1_round4_bf16 --max_source_length 512 --max_target_length 50 --generation_max_length 50 --add_task_name True --add_dataset_name True --overwrite_output_dir --overwrite_cache --lr_scheduler_type constant --warmup_steps 0 --logging_strategy steps --logging_steps 10 --evaluation_strategy no --save_strategy no --save_steps 1500 --lamda_1 0.5 --lamda_2 0 --bf16
+[2025-12-23 12:42:36,151] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+[2025-12-23 12:42:38,108] [INFO] [launch.py:139:main] 0 NCCL_P2P_DISABLE=1
+[2025-12-23 12:42:38,108] [INFO] [launch.py:139:main] 0 NCCL_IB_DISABLE=1
+[2025-12-23 12:42:38,108] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1]}
+[2025-12-23 12:42:38,108] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=2, node_rank=0
+[2025-12-23 12:42:38,108] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1]})
+[2025-12-23 12:42:38,108] [INFO] [launch.py:164:main] dist_world_size=2
+[2025-12-23 12:42:38,108] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1
+[2025-12-23 12:42:38,125] [INFO] [launch.py:256:main] process 1636381 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=0', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/3-yahoo/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/agnews', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/4-agnews', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round4_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16']
+[2025-12-23 12:42:38,153] [INFO] [launch.py:256:main] process 1636382 spawned with command: ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/3-yahoo/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/agnews', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/4-agnews', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round4_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16']
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/utils/generic.py:311: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  torch.utils._pytree._register_pytree_node(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:19: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_fwd(orig_func)  # type: ignore
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/fairscale/experimental/nn/offload.py:30: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  return torch.cuda.amp.custom_bwd(orig_func)  # type: ignore
+[2025-12-23 12:42:41,324] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-12-23 12:42:41,359] [INFO] [real_accelerator.py:219:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2025-12-23 12:42:42,690] [INFO] [comm.py:652:init_distributed] cdb=None
+[2025-12-23 12:42:42,690] [INFO] [comm.py:683:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+[2025-12-23 12:42:42,726] [INFO] [comm.py:652:init_distributed] cdb=None
+12/23/2025 12:42:42 - WARNING - __main__ - Process rank: 0, device: cuda:0, n_gpu: 1distributed training: True, 16-bits training: True
+normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
+12/23/2025 12:42:42 - WARNING - __main__ - Process rank: 1, device: cuda:1, n_gpu: 1distributed training: True, 16-bits training: True
+-----Using Pre-trained LoRA Adapter + base model -----
+normalizer.cc(51) LOG(INFO) precompiled_charsmap is empty. use identity normalization.
+-----Using Pre-trained LoRA Adapter + base model -----
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.77s/it]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.06s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.61s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.79s/it]
+
+Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.71s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.91s/it]
+trainable params: 0 || all params: 6755192832 || trainable%: 0.0
+=======================================
+trainable params: 4194304 || all params: 6755192832 || trainable%: 0.062090070621391845
+-----Gradient checkpointing: False -----
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
+  warnings.warn(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+trainable params: 0 || all params: 6755192832 || trainable%: 0.0
+=======================================
+trainable params: 4194304 || all params: 6755192832 || trainable%: 0.062090070621391845
+-----Gradient checkpointing: False -----
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/accelerate/accelerator.py:446: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys(['dispatch_batches']). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None)
+  warnings.warn(
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+***** Running training *****
+***** Running training *****
+Using /home/dengkn/.cache/torch_extensions/py39_cu124 as PyTorch extensions root...
+Using /home/dengkn/.cache/torch_extensions/py39_cu124 as PyTorch extensions root...
+Detected CUDA files, patching ldflags
+Emitting ninja build file /home/dengkn/.cache/torch_extensions/py39_cu124/fused_adam/build.ninja...
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Building extension module fused_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.18348121643066406 seconds
+Loading extension module fused_adam...
+Time to load fused_adam op: 0.20298314094543457 seconds
+wandb: Currently logged in as: 20040817dkn-facebook (use `wandb login --relogin` to force relogin)
+/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py:12: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import parse_version  # type: ignore
+wandb: wandb version 0.23.1 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.12.10
+wandb: Syncing run order1_round4_bf16
+wandb: ⭐️ View project at https://wandb.ai/20040817dkn-facebook/huggingface
+wandb: 🚀 View run at https://wandb.ai/20040817dkn-facebook/huggingface/runs/5nupoa11
+wandb: Run data is saved locally in /home/dengkn/O-LoRA/wandb/run-20251223_124351-5nupoa11
+wandb: Run `wandb offline` to turn off syncing.
+
+
+  0%|                                                                                                                            | 0/62 [00:00<?, ?it/s]
+  2%|█▊                                                                                                                  | 1/62 [00:05<06:01,  5.93s/it]
+  3%|███▋                                                                                                                | 2/62 [00:11<05:36,  5.61s/it]
+  5%|█████▌                                                                                                              | 3/62 [00:16<05:24,  5.50s/it]
+  6%|███████▍                                                                                                            | 4/62 [00:21<05:08,  5.31s/it]
+  8%|█████████▎                                                                                                          | 5/62 [00:26<05:02,  5.30s/it]
+ 10%|███████████▏                                                                                                        | 6/62 [00:32<04:53,  5.24s/it]
+ 11%|█████████████                                                                                                       | 7/62 [00:37<04:44,  5.17s/it]
+ 13%|██████████████▉                                                                                                     | 8/62 [00:42<04:38,  5.15s/it]
+ 15%|████████████████▊                                                                                                   | 9/62 [00:47<04:35,  5.20s/it]
+ 16%|██████████████████▌                                                                                                | 10/62 [00:52<04:30,  5.20s/it]
+                                                                                                                                                        
+
+ 16%|██████████████████▌                                                                                                | 10/62 [00:52<04:30,  5.20s/it]{'loss': 26.9733, 'learning_rate': 0.0001, 'epoch': 0.16}
+
+ 18%|████████████████████▍                                                                                              | 11/62 [00:57<04:24,  5.19s/it]
+ 19%|██████████████████████▎                                                                                            | 12/62 [01:03<04:21,  5.22s/it]
+ 21%|████████████████████████                                                                                           | 13/62 [01:08<04:18,  5.27s/it]
+ 23%|█████████████████████████▉                                                                                         | 14/62 [01:13<04:14,  5.30s/it]
+ 24%|███████████████████████████▊                                                                                       | 15/62 [01:19<04:11,  5.36s/it]
+ 26%|█████████████████████████████▋                                                                                     | 16/62 [01:24<04:06,  5.35s/it]
+ 27%|███████████████████████████████▌                                                                                   | 17/62 [01:30<04:00,  5.35s/it]
+ 29%|█████████████████████████████████▍                                                                                 | 18/62 [01:35<03:51,  5.27s/it]
+ 31%|███████████████████████████████████▏                                                                               | 19/62 [01:40<03:45,  5.25s/it]
+ 32%|█████████████████████████████████████                                                                              | 20/62 [01:45<03:40,  5.26s/it]
+                                                                                                                                                        
+{'loss': 26.9631, 'learning_rate': 0.0001, 'epoch': 0.32}
+
+ 32%|█████████████████████████████████████                                                                              | 20/62 [01:45<03:40,  5.26s/it]
+ 34%|██████████████████████████████████████▉                                                                            | 21/62 [01:50<03:33,  5.21s/it]
+ 35%|████████████████████████████████████████▊                                                                          | 22/62 [01:56<03:30,  5.25s/it]
+ 37%|██████████████████████████████████████████▋                                                                        | 23/62 [02:01<03:22,  5.20s/it]
+ 39%|████████████████████████████████████████████▌                                                                      | 24/62 [02:06<03:16,  5.17s/it]
+ 40%|██████████████████████████████████████████████▎                                                                    | 25/62 [02:11<03:11,  5.17s/it]
+ 42%|████████████████████████████████████████████████▏                                                                  | 26/62 [02:16<03:07,  5.21s/it]
+ 44%|██████████████████████████████████████████████████                                                                 | 27/62 [02:22<03:02,  5.21s/it]
+ 45%|███████████████████████████████████████████████████▉                                                               | 28/62 [02:27<02:58,  5.24s/it]
+ 47%|█████████████████████████████████████████████████████▊                                                             | 29/62 [02:32<02:52,  5.23s/it]
+ 48%|███████████████████████████████████████████████████████▋                                                           | 30/62 [02:37<02:48,  5.27s/it]
+                                                                                                                                                        
+{'loss': 26.9723, 'learning_rate': 0.0001, 'epoch': 0.48}
+
+ 48%|███████████████████████████████████████████████████████▋                                                           | 30/62 [02:37<02:48,  5.27s/it]
+ 50%|█████████████████████████████████████████████████████████▌                                                         | 31/62 [02:43<02:41,  5.22s/it]
+ 52%|███████████████████████████████████████████████████████████▎                                                       | 32/62 [02:48<02:36,  5.20s/it]
+ 53%|█████████████████████████████████████████████████████████████▏                                                     | 33/62 [02:53<02:32,  5.27s/it]
+ 55%|███████████████████████████████████████████████████████████████                                                    | 34/62 [02:58<02:25,  5.19s/it]
+ 56%|████████████████████████████████████████████████████████████████▉                                                  | 35/62 [03:03<02:20,  5.21s/it]
+ 58%|██████████████████████████████████████████████████████████████████▊                                                | 36/62 [03:08<02:14,  5.17s/it]
+ 60%|████████████████████████████████████████████████████████████████████▋                                              | 37/62 [03:14<02:11,  5.25s/it]
+ 61%|██████████████████████████████████████████████████████████████████████▍                                            | 38/62 [03:19<02:08,  5.34s/it]
+ 63%|████████████████████████████████████████████████████████████████████████▎                                          | 39/62 [03:25<02:01,  5.28s/it]
+ 65%|██████████████████████████████████████████████████████████████████████████▏                                        | 40/62 [03:30<01:57,  5.33s/it]
+                                                                                                                                                        
+{'loss': 27.0319, 'learning_rate': 0.0001, 'epoch': 0.64}
+
+ 65%|██████████████████████████████████████████████████████████████████████████▏                                        | 40/62 [03:30<01:57,  5.33s/it]
+ 66%|████████████████████████████████████████████████████████████████████████████                                       | 41/62 [03:36<01:53,  5.41s/it]
+ 68%|█████████████████████████████████████████████████████████████████████████████▉                                     | 42/62 [03:41<01:47,  5.38s/it]
+ 69%|███████████████████████████████████████████████████████████████████████████████▊                                   | 43/62 [03:47<01:44,  5.49s/it]
+ 71%|█████████████████████████████████████████████████████████████████████████████████▌                                 | 44/62 [03:52<01:36,  5.38s/it]
+ 73%|███████████████████████████████████████████████████████████████████████████████████▍                               | 45/62 [03:57<01:30,  5.32s/it]
+ 74%|█████████████████████████████████████████████████████████████████████████████████████▎                             | 46/62 [04:02<01:25,  5.36s/it]
+ 76%|███████████████████████████████████████████████████████████████████████████████████████▏                           | 47/62 [04:08<01:20,  5.37s/it]
+ 77%|█████████████████████████████████████████████████████████████████████████████████████████                          | 48/62 [04:13<01:15,  5.37s/it]
+ 79%|██████████████████████████████████████████████████████████████████████████████████████████▉                        | 49/62 [04:18<01:09,  5.34s/it]
+ 81%|████████████████████████████████████████████████████████████████████████████████████████████▋                      | 50/62 [04:24<01:03,  5.27s/it]
+                                                                                                                                                        
+{'loss': 26.9635, 'learning_rate': 0.0001, 'epoch': 0.8}
+
+ 81%|████████████████████████████████████████████████████████████████████████████████████████████▋                      | 50/62 [04:24<01:03,  5.27s/it]
+ 82%|██████████████████████████████████████████████████████████████████████████████████████████████▌                    | 51/62 [04:29<00:58,  5.33s/it]
+ 84%|████████████████████████████████████████████████████████████████████████████████████████████████▍                  | 52/62 [04:34<00:52,  5.29s/it]
+ 85%|██████████████████████████████████████████████████████████████████████████████████████████████████▎                | 53/62 [04:39<00:47,  5.27s/it]
+ 87%|████████████████████████████████████████████████████████████████████████████████████████████████████▏              | 54/62 [04:45<00:42,  5.28s/it]
+ 89%|██████████████████████████████████████████████████████████████████████████████████████████████████████             | 55/62 [04:50<00:36,  5.23s/it]
+ 90%|███████████████████████████████████████████████████████████████████████████████████████████████████████▊           | 56/62 [04:55<00:31,  5.20s/it]
+ 92%|█████████████████████████████████████████████████████████████████████████████████████████████████████████▋         | 57/62 [05:00<00:25,  5.19s/it]
+ 94%|███████████████████████████████████████████████████████████████████████████████████████████████████████████▌       | 58/62 [05:05<00:20,  5.19s/it]
+ 95%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████▍     | 59/62 [05:10<00:15,  5.18s/it]
+ 97%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████▎   | 60/62 [05:16<00:10,  5.18s/it]
+                                                                                                                                                        
+{'loss': 27.0034, 'learning_rate': 0.0001, 'epoch': 0.96}
+
+ 97%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████▎   | 60/62 [05:16<00:10,  5.18s/it]
+ 98%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏ | 61/62 [05:21<00:05,  5.24s/it]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 62/62 [05:26<00:00,  5.23s/it]
+                                                                                                                                                        
+{'train_runtime': 331.4429, 'train_samples_per_second': 12.068, 'train_steps_per_second': 0.187, 'train_loss': 26.982650510726437, 'epoch': 0.99}
+
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 62/62 [05:26<00:00,  5.23s/it]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 62/62 [05:26<00:00,  5.27s/it]
+***** train metrics *****
+  epoch                    =       0.99
+  train_loss               =    26.9827
+  train_runtime            = 0:05:31.44
+  train_samples            =       4000
+  train_samples_per_second =     12.068
+  train_steps_per_second   =      0.187
+Starting evaluation loop...
+Starting evaluation loop...
+
+  0%|                                                                                                                          | 0/1900 [00:00<?, ?it/s]
+  0%|                                                                                                                  | 2/1900 [00:01<31:06,  1.02it/s]
+  0%|▏                                                                                                                 | 3/1900 [00:04<47:51,  1.51s/it]
+  0%|▏                                                                                                                 | 4/1900 [00:06<54:33,  1.73s/it]Traceback (most recent call last):
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+    main()
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 582, in main
+    predict_results = trainer.predict(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer_seq2seq.py", line 228, in predict
+    return super().predict(test_dataset, ignore_keys=ignore_keys, metric_key_prefix=metric_key_prefix)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 3142, in predict
+    output = eval_loop(
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 225, in evaluation_loop
+    loss, logits, labels = self.prediction_step(model, inputs, prediction_loss_only, ignore_keys=ignore_keys)
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 372, in prediction_step
+    generated_tokens = self.model.generate(
+  File "/home/dengkn/O-LoRA/src/peft/peft_model.py", line 731, in generate
+    outputs = self.base_model.generate(**kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/generation/utils.py", line 1606, in generate
+    return self.greedy_search(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/generation/utils.py", line 2454, in greedy_search
+    outputs = self(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/O-LoRA/src/model/llama.py", line 63, in forward
+    outputs = self.model(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 925, in forward
+    layer_outputs = decoder_layer(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 635, in forward
+    hidden_states, self_attn_weights, present_key_value = self.self_attn(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 366, in forward
+    value_states = torch.cat([past_key_value[1], value_states], dim=2)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 22.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 10.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1612264 has 4.72 GiB memory in use. Process 1612549 has 3.52 GiB memory in use. Including non-PyTorch memory, this process has 16.23 GiB memory in use. Of the allocated memory 15.21 GiB is allocated by PyTorch, and 325.77 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 605, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 582, in main
+[rank0]:     predict_results = trainer.predict(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer_seq2seq.py", line 228, in predict
+[rank0]:     return super().predict(test_dataset, ignore_keys=ignore_keys, metric_key_prefix=metric_key_prefix)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 3142, in predict
+[rank0]:     output = eval_loop(
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 225, in evaluation_loop
+[rank0]:     loss, logits, labels = self.prediction_step(model, inputs, prediction_loss_only, ignore_keys=ignore_keys)
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 372, in prediction_step
+[rank0]:     generated_tokens = self.model.generate(
+[rank0]:   File "/home/dengkn/O-LoRA/src/peft/peft_model.py", line 731, in generate
+[rank0]:     outputs = self.base_model.generate(**kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/generation/utils.py", line 1606, in generate
+[rank0]:     return self.greedy_search(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/generation/utils.py", line 2454, in greedy_search
+[rank0]:     outputs = self(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/O-LoRA/src/model/llama.py", line 63, in forward
+[rank0]:     outputs = self.model(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 925, in forward
+[rank0]:     layer_outputs = decoder_layer(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 635, in forward
+[rank0]:     hidden_states, self_attn_weights, present_key_value = self.self_attn(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 366, in forward
+[rank0]:     value_states = torch.cat([past_key_value[1], value_states], dim=2)
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 22.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 10.88 MiB is free. Process 1605762 has 19.88 GiB memory in use. Process 1612264 has 4.72 GiB memory in use. Process 1612549 has 3.52 GiB memory in use. Including non-PyTorch memory, this process has 16.23 GiB memory in use. Of the allocated memory 15.21 GiB is allocated by PyTorch, and 325.77 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+wandb: Waiting for W&B process to finish, PID 1637153... (failed 1). Press ctrl-c to abort syncing.
+wandb: - 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.00MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: - 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: | 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: / 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: - 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: \ 0.00MB of 0.03MB uploaded (0.00MB deduped)
+wandb: | 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: / 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: - 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: \ 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: | 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: / 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: - 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: \ 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb: | 0.03MB of 0.03MB uploaded (0.00MB deduped)
+wandb:                                                                                
+wandb: Run history:
+wandb:                      train/epoch ▁▂▄▅▆██
+wandb:                train/global_step ▁▂▄▅▆██
+wandb:              train/learning_rate ▁▁▁▁▁▁
+wandb:                       train/loss ▂▁▂█▁▅
+wandb:                 train/total_flos ▁
+wandb:                 train/train_loss ▁
+wandb:              train/train_runtime ▁
+wandb:   train/train_samples_per_second ▁
+wandb:     train/train_steps_per_second ▁
+wandb: 
+wandb: Run summary:
+wandb:                      train/epoch 0.99
+wandb:                train/global_step 62
+wandb:              train/learning_rate 0.0001
+wandb:                       train/loss 27.0034
+wandb:                 train/total_flos 1.8445050048413696e+16
+wandb:                 train/train_loss 26.98265
+wandb:              train/train_runtime 331.4429
+wandb:   train/train_samples_per_second 12.068
+wandb:     train/train_steps_per_second 0.187
+wandb: 
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Synced order1_round4_bf16: https://wandb.ai/20040817dkn-facebook/huggingface/runs/5nupoa11
+wandb: Find logs at: ./wandb/run-20251223_124351-5nupoa11/logs/debug.log
+wandb: 
+[rank0]:[W1223 12:49:41.713452941 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[2025-12-23 12:49:42,628] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1636381
+[2025-12-23 12:49:42,628] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1636382
+[2025-12-23 12:49:42,953] [ERROR] [launch.py:325:sigkill_handler] ['/home/dengkn/miniforge3/envs/aslora/bin/python3.9', '-u', 'src/run_uie_lora.py', '--local_rank=1', '--do_train', '--do_predict', '--predict_with_generate', '--model_name_or_path', 'logs_and_outputs_llama/order_1/outputs/3-yahoo/adapter', '--data_dir', 'CL_Benchmark', '--task_config_dir', 'configs/order1_configs/agnews', '--instruction_file', 'configs/instruction_config.json', '--instruction_strategy', 'single', '--output_dir', 'logs_and_outputs_llama/order_1/outputs/4-agnews', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '8', '--gradient_accumulation_steps', '32', '--learning_rate', '1e-04', '--num_train_epochs', '1', '--deepspeed', 'configs/ds_configs/stage2_llama.config', '--run_name', 'order1_round4_bf16', '--max_source_length', '512', '--max_target_length', '50', '--generation_max_length', '50', '--add_task_name', 'True', '--add_dataset_name', 'True', '--overwrite_output_dir', '--overwrite_cache', '--lr_scheduler_type', 'constant', '--warmup_steps', '0', '--logging_strategy', 'steps', '--logging_steps', '10', '--evaluation_strategy', 'no', '--save_strategy', 'no', '--save_steps', '1500', '--lamda_1', '0.5', '--lamda_2', '0', '--bf16'] exits with return code = 1
