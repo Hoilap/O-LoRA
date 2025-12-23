@@ -47,13 +47,105 @@ _wandb:
       5: 1
       6:
       - 1
+    - 1: train/predict_loss
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_exact_match
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rouge1
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rougeL
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_exact_match_for_SC
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rouge1_for_SC
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rougeL_for_SC
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_exact_match_for_TC
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rouge1_for_TC
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rougeL_for_TC
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_exact_match_for_amazon
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rouge1_for_amazon
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rougeL_for_amazon
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_exact_match_for_dbpedia
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rouge1_for_dbpedia
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_rougeL_for_dbpedia
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_gen_len
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_global_step
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_runtime
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_samples_per_second
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_steps_per_second
+      5: 1
+      6:
+      - 1
+    - 1: train/predict_samples
+      5: 1
+      6:
+      - 1
     python_version: 3.9.23
     start_time: 1766476895
     t:
       1:
       - 1
       - 11
+      2:
+      - 1
+      - 11
       3:
+      - 7
       - 13
       4: 3.9.23
       5: 0.12.10
