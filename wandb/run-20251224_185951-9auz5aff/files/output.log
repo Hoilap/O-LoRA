@@ -1,0 +1,32 @@
+
+  0%|                                                                                                                                                        | 0/218 [00:00<?, ?it/s]
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight grad: None
+
+  0%|▋                                                                                                                                             | 1/218 [00:53<3:12:56, 53.35s/it]
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight grad: None
+
+  1%|█▎                                                                                                                                            | 2/218 [01:46<3:11:12, 53.11s/it]
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight grad: None
+
+  1%|█▉                                                                                                                                            | 3/218 [02:39<3:09:55, 53.00s/it]
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight grad: None
+
+  2%|██▌                                                                                                                                           | 4/218 [03:32<3:08:54, 52.97s/it]
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight grad: None
+
+
+
+
+
+  4%|██▌                                                          | 9/218 [07:57<3:04:26, 52.95s/it]
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight grad: None
+[LR Debug] global_step=10 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1.6333858966827393 updated=False grad_norm=None
+
+
+
+
+
+
+
+
+

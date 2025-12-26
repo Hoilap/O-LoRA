@@ -1,0 +1,46 @@
+
+  0%|                                                                | 0/218 [00:00<?, ?it/s]
+
+  0%|▏                                                     | 1/218 [01:02<3:44:33, 62.09s/it]
+
+  1%|█▌                                                                                                                                                                     | 2/218 [02:03<3:41:50, 61.62s/it]
+
+
+  2%|███                                                                                                                                                                    | 4/218 [04:08<3:42:15, 62.32s/it]
+
+  2%|███▊                                                                                                                                                                   | 5/218 [05:12<3:42:52, 62.78s/it]
+
+
+
+
+  4%|██████▉                                                                                                                                                                | 9/218 [09:20<3:36:49, 62.25s/it]
+[LR Debug] step=10 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1.6333858966827393 updated=False
+
+
+
+
+
+
+
+
+
+
+  9%|█████████▋                                                                                                     | 19/218 [19:46<3:27:24, 62.54s/it]
+[LR Debug] step=20 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1.6333858966827393 updated=False
+
+
+
+
+
+
+
+
+
+
+
+ 14%|████████████████████                                                                                                                              | 30/218 [31:18<3:16:34, 62.74s/it]
+[LR Debug] step=30 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1.6333858966827393 updated=False
+
+
+
+

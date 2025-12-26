@@ -1,0 +1,86 @@
+2025-12-24 10:55:22,655 INFO    MainThread:2322799 [internal.py:wandb_internal():89] W&B internal server running at pid: 2322799, started at: 2025-12-24 10:55:22.655072
+2025-12-24 10:55:22,660 INFO    WriterThread:2322799 [datastore.py:open_for_write():77] open: /home/dengkn/O-LoRA/wandb/run-20251224_105520-59b2hoy6/run-59b2hoy6.wandb
+2025-12-24 10:55:22,660 DEBUG   HandlerThread:2322799 [handler.py:handle_request():131] handle_request: check_version
+2025-12-24 10:55:22,662 DEBUG   SenderThread:2322799 [sender.py:send():235] send: header
+2025-12-24 10:55:22,662 DEBUG   SenderThread:2322799 [sender.py:send_request():249] send_request: check_version
+2025-12-24 10:55:27,664 DEBUG   SenderThread:2322799 [sender.py:send():235] send: run
+2025-12-24 10:55:55,785 DEBUG   HandlerThread:2322799 [handler.py:handle_request():131] handle_request: shutdown
+2025-12-24 10:55:55,785 INFO    HandlerThread:2322799 [handler.py:finish():739] shutting down handler
+2025-12-24 10:55:55,794 INFO    WriterThread:2322799 [datastore.py:close():281] close: /home/dengkn/O-LoRA/wandb/run-20251224_105520-59b2hoy6/run-59b2hoy6.wandb
+2025-12-24 10:56:01,305 ERROR   SenderThread:2322799 [retry.py:__call__():126] Retry attempt failed:
+Traceback (most recent call last):
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 483, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/util/ssl_.py", line 527, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/ssl.py", line 501, in wrap_socket
+    return self.sslsocket_class._create(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/ssl.py", line 1074, in _create
+    self.do_handshake()
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/ssl.py", line 1343, in do_handshake
+    self._sslobj.do_handshake()
+socket.timeout: _ssl.c:1130: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/util/retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/util/util.py", line 39, in reraise
+    raise value
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/urllib3/connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/lib/retry.py", line 102, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/sdk/internal/internal_api.py", line 140, in execute
+    return self.client.execute(*args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/vendor/gql-0.2.0/gql/client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/vendor/gql-0.2.0/gql/client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/wandb/vendor/gql-0.2.0/gql/transport/requests.py", line 38, in execute
+    request = requests.post(self.url, **post_args)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/requests/adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.wandb.ai', port=443): Read timed out. (read timeout=10)
+2025-12-24 10:57:37,623 INFO    SenderThread:2322799 [dir_watcher.py:__init__():169] watching files in: /home/dengkn/O-LoRA/wandb/run-20251224_105520-59b2hoy6/files
+2025-12-24 10:57:37,623 INFO    SenderThread:2322799 [sender.py:_start_run_threads():809] run started: 59b2hoy6 with start time 1766544920
+2025-12-24 10:57:37,623 INFO    SenderThread:2322799 [sender.py:finish():1075] shutting down sender
+2025-12-24 10:57:37,623 INFO    SenderThread:2322799 [dir_watcher.py:finish():283] shutting down directory watcher
+2025-12-24 10:57:38,624 INFO    SenderThread:2322799 [dir_watcher.py:finish():313] scan: /home/dengkn/O-LoRA/wandb/run-20251224_105520-59b2hoy6/files
+2025-12-24 10:57:38,624 INFO    SenderThread:2322799 [dir_watcher.py:finish():327] scan save: /home/dengkn/O-LoRA/wandb/run-20251224_105520-59b2hoy6/files/config.yaml config.yaml
+2025-12-24 10:57:38,624 INFO    SenderThread:2322799 [file_pusher.py:finish():177] shutting down file pusher
+2025-12-24 10:57:38,624 INFO    SenderThread:2322799 [file_pusher.py:join():182] waiting for file pusher
+2025-12-24 10:57:39,785 INFO    Thread-15 :2322799 [upload_job.py:push():137] Uploaded file /home/dengkn/O-LoRA/wandb/run-20251224_105520-59b2hoy6/files/config.yaml
+2025-12-24 10:57:41,558 INFO    MainThread:2322799 [internal.py:handle_exit():79] Internal process exited

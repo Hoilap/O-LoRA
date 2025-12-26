@@ -50,7 +50,7 @@ from peft import get_peft_config, get_peft_model, LoraConfig, TaskType, PeftMode
 from uie_collator import DataCollatorForUIE
 from uie_dataset_lora import gen_cache_path
 
-from uie_trainer_lora import UIETrainer, DenserEvalCallback, skip_instructions
+from uie_trainer_lora import UIETrainer, DenserEvalCallback, LrAndGradLogCallback, skip_instructions
 from compute_metrics import compute_metrics, compute_grouped_metrics
 from model.llama import LlamaForCausalLM_with_lossmask
 
@@ -421,8 +421,10 @@ def main():
     # optional: lora_A/B is trainable but should not move too far from lorapre_A/B
     # (constrained in "training_step"[uie_trainer_lora.py])
     for name, param in model.named_parameters():
-        if name.find("loranew_") != -1:
+        if name.find("loranew_") != -1:  # 说明loranew_参数需要被更新
             param.requires_grad = True
+            if "loranew_B" in name:
+                torch.nn.init.constant_(param, 0.1)
         elif name.find("lora_") != -1:
             param.requires_grad = False
         # this module should always be frozen because we change the vocabulary
@@ -521,6 +523,16 @@ def main():
     if training_args.gradient_checkpointing:
         model.gradient_checkpointing_enable()
 
+    # callbacks
+    _callbacks = []
+    if training_args.denser_evaluation:
+        _callbacks.append(DenserEvalCallback)
+    # Always register LR/param debug callback; it activates only if env UIE_LOG_LR=1
+    _callbacks.append(LrAndGradLogCallback)
+
+
+
+    
     trainer = UIETrainer(
         model=model,
         args=training_args,
@@ -529,8 +541,13 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_rouge_metrics,
-        callbacks=[DenserEvalCallback] if training_args.denser_evaluation else None
+        callbacks=_callbacks or None
     )
+
+   
+
+
+
 
     all_metrics = {"run_name": training_args.run_name}
 

@@ -1,0 +1,118 @@
+2025-12-24 20:09:29,900 INFO    MainThread:2541443 [internal.py:wandb_internal():89] W&B internal server running at pid: 2541443, started at: 2025-12-24 20:09:29.900038
+2025-12-24 20:09:29,910 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: check_version
+2025-12-24 20:09:29,910 INFO    WriterThread:2541443 [datastore.py:open_for_write():77] open: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/run-35rccf0v.wandb
+2025-12-24 20:09:29,912 DEBUG   SenderThread:2541443 [sender.py:send():235] send: header
+2025-12-24 20:09:29,913 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: check_version
+2025-12-24 20:09:30,532 DEBUG   SenderThread:2541443 [sender.py:send():235] send: run
+2025-12-24 20:09:31,193 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: run_start
+2025-12-24 20:09:31,200 INFO    SenderThread:2541443 [dir_watcher.py:__init__():169] watching files in: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files
+2025-12-24 20:09:31,201 INFO    SenderThread:2541443 [sender.py:_start_run_threads():809] run started: 35rccf0v with start time 1766578167
+2025-12-24 20:09:31,201 DEBUG   SenderThread:2541443 [sender.py:send():235] send: summary
+2025-12-24 20:09:31,203 INFO    SenderThread:2541443 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2025-12-24 20:09:31,209 DEBUG   HandlerThread:2541443 [meta.py:__init__():36] meta init
+2025-12-24 20:09:31,209 DEBUG   HandlerThread:2541443 [meta.py:__init__():50] meta init done
+2025-12-24 20:09:31,209 DEBUG   HandlerThread:2541443 [meta.py:probe():210] probe
+2025-12-24 20:09:31,217 DEBUG   HandlerThread:2541443 [meta.py:_setup_git():200] setup git
+2025-12-24 20:09:31,246 DEBUG   HandlerThread:2541443 [meta.py:_setup_git():207] setup git done
+2025-12-24 20:09:31,247 DEBUG   HandlerThread:2541443 [meta.py:_save_pip():54] save pip
+2025-12-24 20:09:31,248 DEBUG   HandlerThread:2541443 [meta.py:_save_pip():68] save pip done
+2025-12-24 20:09:31,248 DEBUG   HandlerThread:2541443 [meta.py:_save_conda():75] save conda
+2025-12-24 20:09:32,221 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/requirements.txt
+2025-12-24 20:09:32,221 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/conda-environment.yaml
+2025-12-24 20:09:32,222 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/wandb-summary.json
+2025-12-24 20:09:33,127 DEBUG   HandlerThread:2541443 [meta.py:_save_conda():85] save conda done
+2025-12-24 20:09:33,127 DEBUG   HandlerThread:2541443 [meta.py:probe():248] probe done
+2025-12-24 20:09:33,248 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/conda-environment.yaml
+2025-12-24 20:09:33,253 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/wandb-metadata.json
+2025-12-24 20:09:33,280 DEBUG   SenderThread:2541443 [sender.py:send():235] send: files
+2025-12-24 20:09:33,280 INFO    SenderThread:2541443 [sender.py:_save_file():944] saving file wandb-metadata.json with policy now
+2025-12-24 20:09:33,291 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:09:33,293 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:09:33,971 DEBUG   SenderThread:2541443 [sender.py:send():235] send: config
+2025-12-24 20:09:33,973 DEBUG   SenderThread:2541443 [sender.py:send():235] send: metric
+2025-12-24 20:09:33,973 DEBUG   SenderThread:2541443 [sender.py:send():235] send: metric
+2025-12-24 20:09:33,973 WARNING SenderThread:2541443 [sender.py:send_metric():902] Seen metric with glob (shouldnt happen)
+2025-12-24 20:09:34,248 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/output.log
+2025-12-24 20:09:35,033 INFO    Thread-16 :2541443 [upload_job.py:push():137] Uploaded file /tmp/tmp_irksxqiwandb/ccnuwz9q-wandb-metadata.json
+2025-12-24 20:09:36,250 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/output.log
+2025-12-24 20:09:48,977 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:09:48,977 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:10:00,228 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:10:02,269 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/config.yaml
+2025-12-24 20:10:04,724 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:10:04,724 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:10:20,394 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:10:20,394 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:10:31,142 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:10:36,130 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:10:36,131 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:10:46,299 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/output.log
+2025-12-24 20:10:51,683 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:10:51,684 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:11:02,092 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:11:07,275 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:11:07,276 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:11:23,322 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:11:23,323 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:11:32,954 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:11:38,846 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:11:38,846 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:11:54,338 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/output.log
+2025-12-24 20:11:54,714 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:11:54,714 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:12:03,813 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:12:10,233 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:12:10,234 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:12:26,045 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:12:26,045 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:12:34,692 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:12:41,505 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:12:41,505 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:12:57,003 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:12:57,004 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:13:02,383 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/output.log
+2025-12-24 20:13:05,602 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:13:12,793 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:13:12,793 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:13:28,287 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:13:28,288 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:13:36,499 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:13:43,787 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:13:43,787 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:13:59,362 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:13:59,362 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:14:07,438 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:14:12,422 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/output.log
+2025-12-24 20:14:14,927 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:14:14,929 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:14:30,495 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:14:30,495 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:14:38,337 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:14:46,090 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:14:46,090 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:15:01,757 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:15:01,760 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:15:09,219 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:15:17,497 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:15:17,500 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:15:21,460 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/output.log
+2025-12-24 20:15:33,020 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:15:33,021 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:15:40,139 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:15:48,602 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:15:48,602 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:16:04,120 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:16:04,121 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:16:11,037 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:16:19,593 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:16:19,593 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:16:29,496 INFO    Thread-13 :2541443 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_200927-35rccf0v/files/output.log
+2025-12-24 20:16:35,618 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:16:35,618 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:16:41,956 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:16:51,114 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:16:51,115 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:17:06,774 DEBUG   HandlerThread:2541443 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 20:17:06,774 DEBUG   SenderThread:2541443 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 20:17:12,836 DEBUG   SenderThread:2541443 [sender.py:send():235] send: stats
+2025-12-24 20:17:12,862 WARNING MainThread:2541443 [internal.py:wandb_internal():152] Internal process interrupt: 1

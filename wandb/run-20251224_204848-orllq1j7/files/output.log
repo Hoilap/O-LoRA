@@ -1,0 +1,7 @@
+
+  0%|                                                | 0/218 [00:00<?, ?it/s]
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_B.default.weight grad: None
+
+
+  1%|▎                                     | 2/218 [02:23<4:18:40, 71.85s/it]
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_B.default.weight grad: None

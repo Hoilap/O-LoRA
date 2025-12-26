@@ -1,0 +1,55 @@
+
+  0%|                                                                       | 0/218 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3729, in <module>
+    main()
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3714, in main
+    globals = debugger.run(setup["file"], None, None, is_module)
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2698, in run
+    return self._exec(is_module, entry_point_fn, module_name, file, globals, locals)
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2706, in _exec
+    globals = pydevd_runpy.run_path(file, globals, "__main__")
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 310, in run_path
+    return _run_module_code(code, init_globals, run_name, pkg_name=pkg_name, script_name=fname)
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 127, in _run_module_code
+    _run_code(code, mod_globals, init_globals, mod_name, mod_spec, pkg_name, script_name)
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 118, in _run_code
+    exec(code, run_globals)
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 612, in <module>
+    main()
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 552, in main
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+    return inner_training_loop(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 221, in training_step
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 168, in compute_loss
+    if self.state.global_step <= 5 or self.state.global_step % self.args.logging_steps == 0:
+NameError: name 'state' is not defined
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3729, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3714, in main
+[rank0]:     globals = debugger.run(setup["file"], None, None, is_module)
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2698, in run
+[rank0]:     return self._exec(is_module, entry_point_fn, module_name, file, globals, locals)
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2706, in _exec
+[rank0]:     globals = pydevd_runpy.run_path(file, globals, "__main__")
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 310, in run_path
+[rank0]:     return _run_module_code(code, init_globals, run_name, pkg_name=pkg_name, script_name=fname)
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 127, in _run_module_code
+[rank0]:     _run_code(code, mod_globals, init_globals, mod_name, mod_spec, pkg_name, script_name)
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 118, in _run_code
+[rank0]:     exec(code, run_globals)
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 612, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 552, in main
+[rank0]:     train_result = trainer.train(resume_from_checkpoint=checkpoint)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+[rank0]:     return inner_training_loop(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+[rank0]:     tr_loss_step = self.training_step(model, inputs)
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 221, in training_step
+[rank0]:
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 168, in compute_loss
+[rank0]:     if self.state.global_step <= 5 or self.state.global_step % self.args.logging_steps == 0:

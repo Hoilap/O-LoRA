@@ -1,0 +1,41 @@
+2025-12-24 19:22:31,690 INFO    MainThread:2512065 [internal.py:wandb_internal():89] W&B internal server running at pid: 2512065, started at: 2025-12-24 19:22:31.689651
+2025-12-24 19:22:31,697 DEBUG   HandlerThread:2512065 [handler.py:handle_request():131] handle_request: check_version
+2025-12-24 19:22:31,697 INFO    WriterThread:2512065 [datastore.py:open_for_write():77] open: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/run-kro68hj0.wandb
+2025-12-24 19:22:31,697 DEBUG   SenderThread:2512065 [sender.py:send():235] send: header
+2025-12-24 19:22:31,698 DEBUG   SenderThread:2512065 [sender.py:send_request():249] send_request: check_version
+2025-12-24 19:22:32,345 DEBUG   SenderThread:2512065 [sender.py:send():235] send: run
+2025-12-24 19:22:33,155 DEBUG   HandlerThread:2512065 [handler.py:handle_request():131] handle_request: run_start
+2025-12-24 19:22:33,160 INFO    SenderThread:2512065 [dir_watcher.py:__init__():169] watching files in: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files
+2025-12-24 19:22:33,160 INFO    SenderThread:2512065 [sender.py:_start_run_threads():809] run started: kro68hj0 with start time 1766575349
+2025-12-24 19:22:33,160 DEBUG   SenderThread:2512065 [sender.py:send():235] send: summary
+2025-12-24 19:22:33,161 INFO    SenderThread:2512065 [sender.py:_save_file():944] saving file wandb-summary.json with policy end
+2025-12-24 19:22:33,180 DEBUG   HandlerThread:2512065 [meta.py:__init__():36] meta init
+2025-12-24 19:22:33,180 DEBUG   HandlerThread:2512065 [meta.py:__init__():50] meta init done
+2025-12-24 19:22:33,181 DEBUG   HandlerThread:2512065 [meta.py:probe():210] probe
+2025-12-24 19:22:33,189 DEBUG   HandlerThread:2512065 [meta.py:_setup_git():200] setup git
+2025-12-24 19:22:33,229 DEBUG   HandlerThread:2512065 [meta.py:_setup_git():207] setup git done
+2025-12-24 19:22:33,229 DEBUG   HandlerThread:2512065 [meta.py:_save_pip():54] save pip
+2025-12-24 19:22:33,232 DEBUG   HandlerThread:2512065 [meta.py:_save_pip():68] save pip done
+2025-12-24 19:22:33,232 DEBUG   HandlerThread:2512065 [meta.py:_save_conda():75] save conda
+2025-12-24 19:22:34,163 INFO    Thread-13 :2512065 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files/conda-environment.yaml
+2025-12-24 19:22:34,164 INFO    Thread-13 :2512065 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files/requirements.txt
+2025-12-24 19:22:34,164 INFO    Thread-13 :2512065 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files/wandb-summary.json
+2025-12-24 19:22:34,801 DEBUG   HandlerThread:2512065 [meta.py:_save_conda():85] save conda done
+2025-12-24 19:22:34,801 DEBUG   HandlerThread:2512065 [meta.py:probe():248] probe done
+2025-12-24 19:22:34,927 DEBUG   SenderThread:2512065 [sender.py:send():235] send: files
+2025-12-24 19:22:34,927 INFO    SenderThread:2512065 [sender.py:_save_file():944] saving file wandb-metadata.json with policy now
+2025-12-24 19:22:34,939 DEBUG   HandlerThread:2512065 [handler.py:handle_request():131] handle_request: stop_status
+2025-12-24 19:22:34,939 DEBUG   SenderThread:2512065 [sender.py:send_request():249] send_request: stop_status
+2025-12-24 19:22:35,161 INFO    Thread-13 :2512065 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files/conda-environment.yaml
+2025-12-24 19:22:35,169 INFO    Thread-13 :2512065 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files/wandb-metadata.json
+2025-12-24 19:22:35,169 INFO    Thread-13 :2512065 [dir_watcher.py:_on_file_created():217] file/dir created: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files/output.log
+2025-12-24 19:22:36,039 DEBUG   SenderThread:2512065 [sender.py:send():235] send: config
+2025-12-24 19:22:36,042 DEBUG   SenderThread:2512065 [sender.py:send():235] send: metric
+2025-12-24 19:22:36,042 DEBUG   SenderThread:2512065 [sender.py:send():235] send: metric
+2025-12-24 19:22:36,042 WARNING SenderThread:2512065 [sender.py:send_metric():902] Seen metric with glob (shouldnt happen)
+2025-12-24 19:22:36,146 INFO    Thread-16 :2512065 [upload_job.py:push():137] Uploaded file /tmp/tmphgt9w9ehwandb/cmc6us4q-wandb-metadata.json
+2025-12-24 19:23:02,731 DEBUG   SenderThread:2512065 [sender.py:send():235] send: stats
+2025-12-24 19:23:03,182 INFO    Thread-13 :2512065 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files/config.yaml
+2025-12-24 19:23:33,742 DEBUG   SenderThread:2512065 [sender.py:send():235] send: stats
+2025-12-24 19:24:05,022 DEBUG   SenderThread:2512065 [sender.py:send():235] send: stats
+2025-12-24 19:24:22,239 INFO    Thread-13 :2512065 [dir_watcher.py:_on_file_modified():230] file/dir modified: /home/dengkn/O-LoRA/wandb/run-20251224_192229-kro68hj0/files/output.log

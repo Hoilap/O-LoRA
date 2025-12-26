@@ -1,0 +1,64 @@
+
+  0%|                                                                                                                                      | 0/218 [00:00<?, ?it/s][ERROR|tokenization_utils_base.py:1080] 2025-12-24 11:38:58,273 >> Using sep_token, but it is not set yet.
+[ERROR|tokenization_utils_base.py:1103] 2025-12-24 11:38:58,274 >> Using cls_token, but it is not set yet.
+[ERROR|tokenization_utils_base.py:1115] 2025-12-24 11:38:58,274 >> Using mask_token, but it is not set yet.
+Traceback (most recent call last):
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3729, in <module>
+    main()
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3714, in main
+    globals = debugger.run(setup["file"], None, None, is_module)
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2698, in run
+    return self._exec(is_module, entry_point_fn, module_name, file, globals, locals)
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2706, in _exec
+    globals = pydevd_runpy.run_path(file, globals, "__main__")
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 310, in run_path
+    return _run_module_code(code, init_globals, run_name, pkg_name=pkg_name, script_name=fname)
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 127, in _run_module_code
+    _run_code(code, mod_globals, init_globals, mod_name, mod_spec, pkg_name, script_name)
+  File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 118, in _run_code
+    exec(code, run_globals)
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 612, in <module>
+    main()
+  File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 552, in main
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+    return inner_training_loop(
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1982, in _inner_training_loop
+    self.control = self.callback_handler.on_step_end(args, self.state, self.control)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer_callback.py", line 384, in on_step_end
+    return self.call_event("on_step_end", args, state, control)
+  File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer_callback.py", line 406, in call_event
+    result = getattr(callback, event)(
+  File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 131, in on_step_end
+    if model is not None and self.track_name is not None:
+AttributeError: 'LrAndGradLogCallback' object has no attribute 'log_grad'
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3729, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3714, in main
+[rank0]:     globals = debugger.run(setup["file"], None, None, is_module)
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2698, in run
+[rank0]:     return self._exec(is_module, entry_point_fn, module_name, file, globals, locals)
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2706, in _exec
+[rank0]:     globals = pydevd_runpy.run_path(file, globals, "__main__")
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 310, in run_path
+[rank0]:     return _run_module_code(code, init_globals, run_name, pkg_name=pkg_name, script_name=fname)
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 127, in _run_module_code
+[rank0]:     _run_code(code, mod_globals, init_globals, mod_name, mod_spec, pkg_name, script_name)
+[rank0]:   File "/home/dengkn/.vscode-server/extensions/ms-python.debugpy-2025.18.0-linux-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 118, in _run_code
+[rank0]:     exec(code, run_globals)
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 612, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/dengkn/O-LoRA/src/run_uie_lora.py", line 552, in main
+[rank0]:     train_result = trainer.train(resume_from_checkpoint=checkpoint)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1591, in train
+[rank0]:     return inner_training_loop(
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer.py", line 1982, in _inner_training_loop
+[rank0]:     self.control = self.callback_handler.on_step_end(args, self.state, self.control)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer_callback.py", line 384, in on_step_end
+[rank0]:     return self.call_event("on_step_end", args, state, control)
+[rank0]:   File "/home/dengkn/miniforge3/envs/aslora/lib/python3.9/site-packages/transformers/trainer_callback.py", line 406, in call_event
+[rank0]:     result = getattr(callback, event)(
+[rank0]:   File "/home/dengkn/O-LoRA/src/uie_trainer_lora.py", line 131, in on_step_end
+[rank0]:     if model is not None and self.track_name is not None:
+[rank0]: AttributeError: 'LrAndGradLogCallback' object has no attribute 'log_grad'

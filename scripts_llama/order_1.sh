@@ -25,7 +25,7 @@ CUDA_VISIBLE_DEVICES=0,1 deepspeed --master_port $port src/run_uie_lora.py \
    --output_dir logs_and_outputs_llama/order_1/outputs/1-dbpedia \
    --per_device_train_batch_size 1 \
    --per_device_eval_batch_size 8 \
-   --gradient_accumulation_steps 32 \
+   --gradient_accumulation_steps 1 \
    --learning_rate 1e-03 \
    --num_train_epochs 1 \
    --deepspeed configs/ds_configs/stage2_llama.config \

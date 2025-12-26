@@ -264,6 +264,29 @@ export NCCL_IB_DISABLE=1
 有一丢丢提升
 
 Global Batch Size（单卡训练和 8 卡训练的梯度累积必须对齐）。
+
+
+---
+
+删除了deepspeed的学习率调度，学习率在debuglog中能显示了
+```
+  0%|▌                                                                                                                 | 1/218 [01:03<3:51:27, 64.00s/it][LR Debug] global_step=1 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1.6333858966827393 updated=False grad_norm=None
+[LR Debug] global_step=1 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1.6333858966827393 updated=False grad_norm=None
+[LR Debug] global_step=2 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1  1%|█                                                                                                                 | 2/218 [02:07<3:49:59, 63.89s/it]
+[LR Debug] global_step=2 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1.6333858966827393 updated=False grad_norm=None
+[LR Debug] global_step=3 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1  1%|█▌                                                                                                                | 3/218 [03:09<3:44:59, 62.79s/it]
+[LR Debug] global_step=3 current_lrs=[0.001] scheduled_lrs=[0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_A.default.weight norm=1.6333858966827393 updated=False grad_norm=None
+```
+
+改了学习率，使用断点进行调试，还把混合精度关掉了，无果
+```
+[LR Debug] global_step=3 current_lrs=[0.001] scheduled_lrs=[0.001, 0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_B.default.weight norm=18.1019344329834 updated=False grad_norm=None
+[Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_B.default.weight grad: None
+[LR Debug] global_step=4 current_lrs=[0.001] scheduled_lrs=[0.001, 0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_B.default.weight norm=18.1019344329834 updated=False grad_norm=None
+  2%|█▊                                                                                                | 4/218 [03:34<3:11:21, 53.65s/it][Debug] base_model.model.model.layers.0.self_attn.q_proj.loranew_B.default.weight grad: None
+[LR Debug] global_step=4 current_lrs=[0.001] scheduled_lrs=[0.001, 0.001] track=base_model.model.model.layers.0.self_attn.q_proj.loranew_B.default.weight norm=18.1019344329834 updated=False grad_norm=None
+```
+
 ### 知识：什么是梯度累计
 在深度学习训练中，Batch Size（批大小）对模型性能有很大影响：
 训练稳定性： Batch Size 越大，计算出的梯度越接近整个数据集的真实梯度方向，训练过程更平稳，不容易陷入局部抖动。
@@ -273,6 +296,9 @@ Global Batch Size（单卡训练和 8 卡训练的梯度累积必须对齐）。
 缺点/局限性：
 时间换空间： 梯度累积并不能加快训练速度。跑完一个“有效 Batch”的时间依然是 16 次小 Batch 计算的总和。
 Batch Normalization (BN) 的坑： 这是一个常见误区。梯度累积不能解决 BN 在小 Batch 上的不准确问题。因为 BN 是在每一层前向传播时根据当前 Batch 计算均值和方差的。如果你单次输入的 Batch 只有 2，BN 还是会基于 2 来计算，梯度累积救不了它。（解决方法通常是改用 Layer Norm 或 Group Norm）。
+### 各种step的定义
+tqdm 步数：在 Trainer 中，进度条只有在 global_step 增加时才会跳动（即完成了一个完整的梯度累积周期，执行了 optimizer.step()）。
+on_step_end 调用：这个回调函数在每一个 batch 处理完之后都会被调用。如果你设置 gradient_accumulation_steps=32，那么在 tqdm 步数增加 1 之前，on_step_end 已经跑了 32 次。
 
 ### 思考1
 对aslora的的激活值进行层相似度计算，batchsize=1，怎么计算？好像也能计算，不过不同样本的稀疏度就不一样了。

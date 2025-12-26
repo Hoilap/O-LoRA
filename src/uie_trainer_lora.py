@@ -3,6 +3,7 @@ from transformers import GenerationConfig
 from transformers.trainer_seq2seq import Seq2SeqTrainer
 from transformers.trainer import *
 from transformers.trainer_callback import TrainerCallback
+import os
 from transformers.integrations import is_deepspeed_zero3_enabled
 
 from uie_collator import SUPPORTED_DECODER_MODELS, check_model
@@ -51,7 +52,197 @@ class DenserEvalCallback(TrainerCallback):
         return control
 
 
+class LrAndGradLogCallback(TrainerCallback):
+    """Log actual optimizer lrs, scheduler last lr, and LoRA param update.
+
+    Enable by setting env UIE_LOG_LR=1. Logs every args.logging_steps steps.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.enabled = os.environ.get("UIE_LOG_LR", "0") == "1"
+        self.track_name = None
+        self.prev_norm = None
+
+    def on_train_begin(self, args: TrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
+        if not self.enabled:
+            return
+        model = kwargs.get("model", None)
+        if model is None:
+            return
+        # pick first trainable LoRA-new param
+        for n, p in model.named_parameters():
+            if p.requires_grad and ("loranew_B" in n or "lora_" in n):
+                self.track_name = n
+                self.prev_norm = p.data.float().norm().item()
+                logger.info(f"[LR Debug] tracking param: {self.track_name}, init_norm={self.prev_norm:.6f}")
+                break
+
+    def on_step_end(self, args: TrainingArguments, state: TrainerState, control: TrainerControl, **kwargs):
+        if not self.enabled:
+            return control
+
+        # throttle by logging_steps (and also log very early steps)
+        log_now = False
+        if args.logging_strategy == IntervalStrategy.STEPS and args.logging_steps:
+            if state.global_step <= 5 or state.global_step % args.logging_steps == 0:
+                log_now = True
+        else:
+            log_now = state.global_step <= 5
+
+        if not log_now:
+            return control
+
+        optimizer = kwargs.get("optimizer", None)
+        lr_scheduler = kwargs.get("lr_scheduler", None)
+        model = kwargs.get("model", None)
+
+        # current lrs actually on optimizer param groups
+        current_lrs = []
+        try:
+            if optimizer is not None and hasattr(optimizer, "param_groups"):
+                current_lrs = [float(pg.get("lr", 0.0)) for pg in optimizer.param_groups]
+        except Exception:
+            pass
+
+        # scheduler last lr (represents lr computed for next step in most schedulers)
+        scheduled_lrs = None
+        try:
+            if lr_scheduler is not None and hasattr(lr_scheduler, "get_last_lr"):
+                scheduled_lrs = [float(x) for x in lr_scheduler.get_last_lr()]
+        except Exception:
+            pass
+
+        # detect param update by norm change (only true on steps with optimizer.step())
+        updated = None
+        norm_val = None
+        if model is not None and self.track_name is not None:
+            try:
+                p = dict(model.named_parameters()).get(self.track_name, None)
+                if p is not None:
+                    norm_val = p.data.float().norm().item()
+                    if self.prev_norm is not None:
+                        updated = abs(norm_val - self.prev_norm) > 1e-12
+                    self.prev_norm = norm_val
+            except Exception:
+                pass
+
+        grad_norm = None
+        if model is not None and self.track_name is not None:
+            try:
+                p = dict(model.named_parameters()).get(self.track_name, None)
+                if p is not None:
+                    if p.grad is not None:
+                        grad_norm = p.grad.data.float().norm().item()
+                    # [Debug] print grad to check if it is None or all zeros
+                    print(f"[Debug] {self.track_name} grad: {p.grad}")
+                    '''
+                    打印为none, Trainer 的机制限制：在 transformers.Trainer 的主循环中，执行顺序是：
+                    loss.backward()（产生梯度）
+                    optimizer.step()（利用梯度更新参数）
+                    optimizer.zero_grad() （清空梯度为 None）
+                    state.global_step += 1
+                    调用 on_step_end（你的 Callback 在这里执行）
+                    '''
+            except Exception:
+                pass
+
+        msg = (
+            f"[LR Debug] global_step={state.global_step} current_lrs={current_lrs} "
+            f"scheduled_lrs={scheduled_lrs} track={self.track_name} norm={norm_val} updated={updated} grad_norm={grad_norm}"
+        )
+        logger.info(msg)
+        # Also print to stdout to ensure visibility regardless of logger settings
+        print(msg)
+
+        return control
+
 class UIETrainer(Seq2SeqTrainer):
+    def __init__(self, *args, **kwargs):
+        print("UIETrainer Initialized")
+        super().__init__(*args, **kwargs)
+
+    def create_optimizer_and_scheduler(self, num_training_steps: int):
+        """
+        重写优化器创建逻辑，确保所有 requires_grad=True 的参数（包括 loranew_）都被加入。
+        """
+        print(f">>>> [DEBUG] create_optimizer_and_scheduler is called! steps={num_training_steps} <<<<", flush=True)
+        print(f"self.optimizer: {self.optimizer}", flush=True)
+        
+        # 打印一下，确保你的 loranew 参数确实在里面
+        num_loranew = sum(1 for n, p in self.model.named_parameters() if "loranew_" in n and p.requires_grad)
+        print(f"--- [Optimizer Debug] Found {num_loranew} 'loranew_' parameters to optimize.")
+    
+        # 2. 获取优化器参数（从 TrainingArguments 中读取学习率、权重衰减等）
+        optimizer_cls, optimizer_kwargs = Trainer.get_optimizer_cls_and_kwargs(self.args)
+        
+        # 3. 按照标准逻辑处理权重衰减（可选，但建议保留）
+        decay_parameters = self.get_decay_parameter_names(self.model)
+        optimizer_grouped_parameters = [
+            {
+                "params": [p for n, p in self.model.named_parameters() if (n in decay_parameters and p.requires_grad)],
+                "weight_decay": self.args.weight_decay,
+            },
+            {
+                "params": [p for n, p in self.model.named_parameters() if (n not in decay_parameters and p.requires_grad)],
+                "weight_decay": 0.0,
+            },
+        ]
+
+        # 4. 实例化优化器
+        self.optimizer = optimizer_cls(optimizer_grouped_parameters, **optimizer_kwargs)
+        
+        self.create_scheduler(num_training_steps=num_training_steps, optimizer=self.optimizer)\
+        
+
+    def compute_loss_for_debug(self, model, inputs, return_outputs=False, **kwargs):
+        # 1. 调用原始的 compute_loss 得到 loss Tensor
+        outputs = super().compute_loss(model, inputs, return_outputs=True)
+        loss, logits = (outputs[0], outputs[1]) if isinstance(outputs, tuple) else (outputs, None)
+
+        # 2. 检查计算图
+        # 使用 self.state.global_step 访问当前的步数
+        if self.state.global_step <= 5 or self.state.global_step % self.args.logging_steps == 0:
+            print(f"\n[Debug Graph] Global Step: {self.state.global_step}")
+            
+            # 打印 grad_fn。如果显示为 None，说明从这里计算图就断了
+            print(f"[Debug Graph] Loss grad_fn: {loss.grad_fn}")
+
+            # 3. 终极测试：直接测试参数与 Loss 的连通性
+            # 遍历模型中所有 requires_grad=True 的参数
+            found_trainable = False
+            for n, p in model.named_parameters():
+                if p.requires_grad and ("loranew_" in n or "lora_" in n):
+                    found_trainable = True
+                    # 使用 torch.autograd.grad 尝试直接计算梯度
+                    # retain_graph=True 是为了不影响后续 Trainer 自己的 backward
+                    # allow_unused=True 是为了防止参数没参与计算时报错
+                    grads = torch.autograd.grad(loss, p, retain_graph=True, allow_unused=True)[0]
+                    
+                    if grads is None:
+                        print(f"!!! [CRITICAL] 参数 {n} 没参与计算 (grad is None) !!!")
+                    else:
+                        print(f"--- [SUCCESS] 参数 {n} 连通正常，当前瞬时梯度 norm: {grads.norm().item():.8f}")
+            
+            if not found_trainable:
+                print("!!! [WARNING] 未发现任何 requires_grad=True 的 LoRA 参数 !!!")
+
+        return (loss, logits) if return_outputs else loss
+    def _check_grad_fn(self, grad_fn, target_name, depth=0, max_depth=100):
+        """递归检查计算图节点（仅作高级调试参考）"""
+        if grad_fn is None or depth > max_depth:
+            return False
+        # 检查该节点是否关联了我们的参数名（这取决于具体算子，不一定都能看到名字）
+        # 但通常我们可以通过查看 next_functions 来遍历
+        if hasattr(grad_fn, 'next_functions'):
+            for next_f, _ in grad_fn.next_functions:
+                if next_f is not None:
+                    # 只要能一直追踪到 AccumulateGrad 节点，说明图没断
+                    if "AccumulateGrad" in str(next_f):
+                        return True
+                    if self._check_grad_fn(next_f, target_name, depth + 1):
+                        return True
+        return False
 
     def training_step(self, model: nn.Module, inputs: Dict[str, Union[torch.Tensor, Any]]) -> torch.Tensor:
         """

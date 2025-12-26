@@ -42,6 +42,8 @@ CUDA_VISIBLE_DEVICES=0 deepspeed --master_port $port src/run_uie_lora.py \
    --lamda_1 0.5 \
    --lamda_2 0
 
+
+# warmup_steps =0 这意味着学习率应当从第 1 步起就固定为传入的 --learning_rate（如 1e-3 或 1e-4），不会出现 warmup 期的 0→base 上升。
 sleep 5
 
 CUDA_VISIBLE_DEVICES=0 deepspeed --master_port $port src/run_uie_lora.py \
